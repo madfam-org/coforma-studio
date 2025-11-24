@@ -31,7 +31,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@coforma/types": "workspace:*",
     "@coforma/ui": "workspace:*",
-    "@sentry/nextjs": "^7.99.0",
+    "@sentry/nextjs": "^10.26.0",
     "posthog-js": "^1.100.0"
   },
   "devDependencies": {
