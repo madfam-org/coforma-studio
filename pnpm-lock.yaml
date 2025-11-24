@@ -224,8 +224,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.1
       lucide-react:
-        specifier: ^0.312.0
-        version: 0.312.0(react@18.3.1)
+        specifier: ^0.554.0
+        version: 0.554.0(react@18.3.1)
       tailwind-merge:
         specifier: ^2.2.0
         version: 2.6.0
@@ -7511,10 +7511,10 @@ packages:
     engines: {node: 20 || >=22}
     dev: true
 
-  /lucide-react@0.312.0(react@18.3.1):
-    resolution: {integrity: sha512-3UZsqyswRXjW4t+nw+InICewSimjPKHuSxiFYqTshv9xkK3tPPntXk/lvXc9pKlXIxm3v9WKyoxcrB6YHhP+dg==}
+  /lucide-react@0.554.0(react@18.3.1):
+    resolution: {integrity: sha512-St+z29uthEJVx0Is7ellNkgTEhaeSoA42I7JjOCBCrc5X6LYMGSv0P/2uS5HDLTExP5tpiqRD2PyUEOS6s9UXA==}
     peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
     dependencies:
       react: 18.3.1
     dev: false
