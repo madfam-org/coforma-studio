@@ -273,11 +273,11 @@ importers:
         specifier: ^5.17.19
         version: 5.90.8(react@19.2.0)
       '@trpc/client':
-        specifier: ^10.45.0
-        version: 10.45.2(@trpc/server@10.45.2)
+        specifier: ^11.7.2
+        version: 11.7.2(@trpc/server@10.45.2)(typescript@5.9.3)
       '@trpc/react-query':
         specifier: ^10.45.0
-        version: 10.45.2(@tanstack/react-query@5.90.8)(@trpc/client@10.45.2)(@trpc/server@10.45.2)(react-dom@19.2.0)(react@19.2.0)
+        version: 10.45.2(@tanstack/react-query@5.90.8)(@trpc/client@11.7.2)(@trpc/server@10.45.2)(react-dom@19.2.0)(react@19.2.0)
       '@trpc/server':
         specifier: ^10.45.0
         version: 10.45.2
@@ -4151,15 +4151,17 @@ packages:
   /@tokenizer/token@0.3.0:
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
 
-  /@trpc/client@10.45.2(@trpc/server@10.45.2):
-    resolution: {integrity: sha512-ykALM5kYWTLn1zYuUOZ2cPWlVfrXhc18HzBDyRhoPYN0jey4iQHEFSEowfnhg1RvYnrAVjNBgHNeSAXjrDbGwg==}
+  /@trpc/client@11.7.2(@trpc/server@10.45.2)(typescript@5.9.3):
+    resolution: {integrity: sha512-OQxqUMfpDvjcszo9dbnqWQXnW2L5IbrKSz2H7l8s+mVM3EvYw7ztQ/gjFIN3iy0NcamiQfd4eE6qjcb9Lm+63A==}
     peerDependencies:
-      '@trpc/server': 10.45.2
+      '@trpc/server': 11.7.2
+      typescript: '>=5.7.2'
     dependencies:
       '@trpc/server': 10.45.2
+      typescript: 5.9.3
     dev: false
 
-  /@trpc/react-query@10.45.2(@tanstack/react-query@5.90.8)(@trpc/client@10.45.2)(@trpc/server@10.45.2)(react-dom@19.2.0)(react@19.2.0):
+  /@trpc/react-query@10.45.2(@tanstack/react-query@5.90.8)(@trpc/client@11.7.2)(@trpc/server@10.45.2)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-BAqb9bGZIscroradlNx+Cc9522R+idY3BOSf5z0jHUtkxdMbjeGKxSSMxxu7JzoLqSIEC+LVzL3VvF8sdDWaZQ==}
     peerDependencies:
       '@tanstack/react-query': ^4.18.0
@@ -4169,7 +4171,7 @@ packages:
       react-dom: '>=16.8.0'
     dependencies:
       '@tanstack/react-query': 5.90.8(react@19.2.0)
-      '@trpc/client': 10.45.2(@trpc/server@10.45.2)
+      '@trpc/client': 11.7.2(@trpc/server@10.45.2)(typescript@5.9.3)
       '@trpc/server': 10.45.2
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -9728,7 +9730,6 @@ packages:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
