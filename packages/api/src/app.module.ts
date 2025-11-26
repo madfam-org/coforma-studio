@@ -8,6 +8,7 @@ import { LoggerModule } from './lib/logger/logger.module';
 import { PrismaModule } from './lib/prisma/prisma.module';
 import { HealthModule } from './modules/health/health.module';
 import { TrpcModule } from './trpc/trpc.module';
+import { BillingModule } from './modules/billing/billing.module';
 import { GlobalExceptionFilter } from './lib/errors/global-exception.filter';
 import { LoggerService } from './lib/logger/logger.service';
 
@@ -32,6 +33,7 @@ import { LoggerService } from './lib/logger/logger.service';
     PrismaModule,
     TrpcModule,
     HealthModule,
+    BillingModule,
 
     // Feature modules will be added here as they are implemented
     // TenantModule,
