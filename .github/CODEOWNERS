@@ -1,0 +1,40 @@
+# CODEOWNERS file for Coforma Studio (Customer Advisory Board Platform)
+#
+# Code owners are automatically requested for review when someone opens a pull request
+# that modifies code that they own.
+
+# Default owners for everything in the repo
+* @madfam-io/developers
+
+# GitHub configuration and workflows
+/.github/ @madfam-io/devops @madfam-io/developers
+
+# Root configuration files
+/*.config.* @madfam-io/developers
+/*.json @madfam-io/developers
+
+# Documentation
+/docs/ @madfam-io/developers
+README.md @madfam-io/developers
+
+# Packages
+/packages/web/ @madfam-io/web-team
+/packages/api/ @madfam-io/backend-team
+/packages/db/ @madfam-io/database-team @madfam-io/backend-team
+
+# Database
+**/prisma/ @madfam-io/database-team @madfam-io/backend-team
+
+# Security-sensitive
+**/.env.* @madfam-io/security-team @madfam-io/devops
+
+# Infrastructure
+docker-compose*.yml @madfam-io/devops
+**/*deploy*.yml @madfam-io/devops
+
+# Testing
+**/*.test.* @madfam-io/qa-team @madfam-io/developers
+
+# Dependencies
+package.json @madfam-io/security-team @madfam-io/developers
+pnpm-lock.yaml @madfam-io/security-team @madfam-io/developers
