@@ -31,7 +31,6 @@
     "@hookform/resolvers": "^3.3.4",
     "@coforma/types": "workspace:*",
     "@janua/react-sdk": "^0.1.0",
-    "@madfam/analytics": "^0.1.0",
     "@coforma/ui": "workspace:*",
     "@sentry/nextjs": "^7.99.0",
     "posthog-js": "^1.100.0"
