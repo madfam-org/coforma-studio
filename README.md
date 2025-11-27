@@ -83,6 +83,20 @@ By building Coforma Studio, MADFAM both **improves its own product development c
 - **Docker** & Docker Compose
 - **Git**
 
+### NPM Registry Configuration
+
+Coforma Studio uses MADFAM's private npm registry for internal packages. Configure your `.npmrc`:
+
+```bash
+# Add to your project's .npmrc or ~/.npmrc
+@madfam:registry=https://npm.madfam.io
+@coforma:registry=https://npm.madfam.io
+@janua:registry=https://npm.madfam.io
+//npm.madfam.io/:_authToken=${NPM_MADFAM_TOKEN}
+```
+
+Set the `NPM_MADFAM_TOKEN` environment variable with your registry token.
+
 ### Quick Start
 
 ```bash

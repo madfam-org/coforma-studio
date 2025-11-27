@@ -42,6 +42,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Configure npm registry
+        run: |
+          echo "@madfam:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@coforma:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@janua:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "//npm.madfam.io/:_authToken=${{ secrets.NPM_MADFAM_TOKEN }}" >> ~/.npmrc
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -82,6 +89,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Configure npm registry
+        run: |
+          echo "@madfam:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@coforma:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@janua:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "//npm.madfam.io/:_authToken=${{ secrets.NPM_MADFAM_TOKEN }}" >> ~/.npmrc
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -118,6 +132,13 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
+      - name: Configure npm registry
+        run: |
+          echo "@madfam:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@coforma:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@janua:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "//npm.madfam.io/:_authToken=${{ secrets.NPM_MADFAM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -186,6 +207,13 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
+      - name: Configure npm registry
+        run: |
+          echo "@madfam:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@coforma:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "@janua:registry=https://npm.madfam.io" >> ~/.npmrc
+          echo "//npm.madfam.io/:_authToken=${{ secrets.NPM_MADFAM_TOKEN }}" >> ~/.npmrc
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
