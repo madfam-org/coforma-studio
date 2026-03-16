@@ -48,7 +48,7 @@ jobs:
     if: always()
     steps:
       - name: Send Slack notification
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v3.0.1
         if: success()
         with:
           payload: |
@@ -68,7 +68,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Send Slack notification (failure)
-        uses: slackapi/slack-github-action@v2.1.1
+        uses: slackapi/slack-github-action@v3.0.1
         if: failure()
         with:
           payload: |
