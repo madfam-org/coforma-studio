@@ -1,0 +1,106 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: coforma-studio
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: coforma-studio
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-cloudflared-ingress
+  namespace: coforma-studio
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: coforma-studio
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: cloudflare-tunnel
+    ports:
+    - port: 80
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: coforma-studio
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: coforma-studio
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+    ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-data-egress
+  namespace: coforma-studio
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: coforma-studio
+  policyTypes: [Egress]
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: data
+    ports:
+    - port: 5432
+    - port: 6432
+    - port: 6379
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-https-egress
+  namespace: coforma-studio
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: coforma-studio
+  policyTypes: [Egress]
+  egress:
+  - ports:
+    - port: 443
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-intra-namespace
+  namespace: coforma-studio
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: coforma-studio
+  policyTypes: [Ingress, Egress]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: coforma-studio
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: coforma-studio

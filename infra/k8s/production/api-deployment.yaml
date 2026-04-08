@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coforma-studio-api
+  namespace: coforma-studio
+  labels:
+    app: coforma-studio-api
+    app.kubernetes.io/name: coforma-studio-api
+    app.kubernetes.io/part-of: coforma-studio
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: coforma-studio-api
+  template:
+    metadata:
+      labels:
+        app: coforma-studio-api
+        app.kubernetes.io/name: coforma-studio-api
+        app.kubernetes.io/part-of: coforma-studio
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      imagePullSecrets:
+      - name: ghcr-credentials
+      containers:
+      - name: coforma-studio-api
+        image: ghcr.io/madfam-org/coforma-studio/api:latest
+        ports:
+        - containerPort: 3001
+          name: http
+        envFrom:
+        - secretRef:
+            name: coforma-studio-secrets
+            optional: true
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3001
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3001
+          periodSeconds: 30

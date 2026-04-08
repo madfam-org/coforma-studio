@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coforma-studio-admin
+  namespace: coforma-studio
+spec:
+  type: ClusterIP
+  selector:
+    app: coforma-studio-admin
+  ports:
+  - port: 80
+    targetPort: 3002
+    protocol: TCP

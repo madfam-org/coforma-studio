@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coforma-studio-admin
+  namespace: coforma-studio
+  labels:
+    app: coforma-studio-admin
+    app.kubernetes.io/name: coforma-studio-admin
+    app.kubernetes.io/part-of: coforma-studio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coforma-studio-admin
+  template:
+    metadata:
+      labels:
+        app: coforma-studio-admin
+        app.kubernetes.io/name: coforma-studio-admin
+        app.kubernetes.io/part-of: coforma-studio
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      imagePullSecrets:
+      - name: ghcr-credentials
+      containers:
+      - name: coforma-studio-admin
+        image: ghcr.io/madfam-org/coforma-studio/admin:latest
+        ports:
+        - containerPort: 3002
+          name: http
+        envFrom:
+        - secretRef:
+            name: coforma-studio-secrets
+            optional: true
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        startupProbe:
+          httpGet:
+            path: /
+            port: 3002
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3002
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3002
+          periodSeconds: 30

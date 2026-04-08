@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coforma-studio-web
+  namespace: coforma-studio
+spec:
+  type: ClusterIP
+  selector:
+    app: coforma-studio-web
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
