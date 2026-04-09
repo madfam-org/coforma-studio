@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 
 import { TenantNav } from '@/components/TenantNav';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 
 export default async function TenantLayout({
   children,
@@ -11,7 +10,7 @@ export default async function TenantLayout({
   children: React.ReactNode;
   params: { tenant: string };
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   if (!session) {
     redirect('/auth/signin');

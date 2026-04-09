@@ -4,53 +4,33 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 const errorMessages: Record<string, { title: string; description: string }> = {
-  Configuration: {
-    title: 'Server Configuration Error',
-    description: 'There is a problem with the server configuration. Please contact support.',
+  TokenExchange: {
+    title: 'Authentication Failed',
+    description: 'Could not complete the sign-in process. The authorization code may have expired.',
+  },
+  UserInfo: {
+    title: 'Account Information Error',
+    description: 'Could not retrieve your account information from the authentication provider.',
+  },
+  MissingCode: {
+    title: 'Incomplete Authentication',
+    description: 'The authentication response was incomplete. Please try signing in again.',
+  },
+  Callback: {
+    title: 'Callback Error',
+    description: 'An error occurred during the authentication callback.',
   },
   AccessDenied: {
     title: 'Access Denied',
     description: 'You do not have permission to sign in.',
   },
-  Verification: {
-    title: 'Verification Failed',
-    description: 'The verification token has expired or has already been used.',
-  },
-  OAuthSignin: {
-    title: 'OAuth Sign In Error',
-    description: 'Error occurred while trying to sign in with the OAuth provider.',
-  },
-  OAuthCallback: {
-    title: 'OAuth Callback Error',
-    description: 'Error occurred during the OAuth callback process.',
-  },
-  OAuthCreateAccount: {
-    title: 'Account Creation Failed',
-    description: 'Could not create your account with the OAuth provider.',
-  },
-  EmailCreateAccount: {
-    title: 'Email Account Creation Failed',
-    description: 'Could not create your account with the email provider.',
-  },
-  Callback: {
-    title: 'Callback Error',
-    description: 'Error occurred in the authentication callback.',
-  },
-  OAuthAccountNotLinked: {
-    title: 'Account Not Linked',
-    description: 'This email is already associated with another account. Please sign in with your original provider.',
-  },
-  EmailSignin: {
-    title: 'Email Sign In Error',
-    description: 'The email sign in link is invalid or has expired.',
-  },
-  CredentialsSignin: {
-    title: 'Sign In Failed',
-    description: 'The credentials you provided are incorrect.',
-  },
   SessionRequired: {
     title: 'Authentication Required',
     description: 'You must be signed in to access this page.',
+  },
+  SessionExpired: {
+    title: 'Session Expired',
+    description: 'Your session has expired. Please sign in again.',
   },
   Default: {
     title: 'Authentication Error',
@@ -91,7 +71,6 @@ export default function AuthErrorPage() {
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
               <li>Try signing in again</li>
               <li>Clear your browser cache and cookies</li>
-              <li>Try a different sign-in method</li>
               <li>Contact support if the problem persists</li>
             </ul>
           </div>

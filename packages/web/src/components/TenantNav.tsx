@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface TenantNavProps {
   tenantSlug: string;
@@ -12,9 +11,16 @@ interface TenantNavProps {
 
 export function TenantNav({ tenantSlug, tenantName, userRole }: TenantNavProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (path: string) => {
     return pathname === `/${tenantSlug}${path}` || pathname.startsWith(`/${tenantSlug}${path}/`);
+  };
+
+  const handleSignOut = async () => {
+    // Clear the session cookie via the API route, then redirect to the sign-out page
+    await fetch('/api/auth/signout', { method: 'POST' });
+    router.push('/auth/signout');
   };
 
   const navItems = [
@@ -100,7 +106,7 @@ export function TenantNav({ tenantSlug, tenantName, userRole }: TenantNavProps) 
       {/* User Menu */}
       <div className="p-4 border-t">
         <button
-          onClick={() => signOut({ callbackUrl: '/' })}
+          onClick={handleSignOut}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition text-left"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

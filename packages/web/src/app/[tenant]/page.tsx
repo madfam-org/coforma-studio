@@ -1,14 +1,13 @@
 import Link from 'next/link';
-import { getServerSession } from 'next-auth';
 
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 
 export default async function TenantDashboard({
   params,
 }: {
   params: { tenant: string };
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   const tenant = session?.user.tenants.find((t) => t.slug === params.tenant);
 
   return (

@@ -1,9 +1,11 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+const JANUA_ISSUER_URL = process.env.NEXT_PUBLIC_JANUA_ISSUER_URL || '';
+const JANUA_CLIENT_ID = process.env.NEXT_PUBLIC_JANUA_CLIENT_ID || '';
 
 export default function SignOutPage() {
   const router = useRouter();
@@ -13,12 +15,21 @@ export default function SignOutPage() {
   const handleSignOut = async () => {
     setIsSigningOut(true);
     try {
-      await signOut({ redirect: false });
+      // Clear the local session cookie via API
+      await fetch('/api/auth/signout', { method: 'POST' });
       setSignedOut(true);
-      // Redirect to home after 2 seconds
+
+      // Redirect to Janua's logout endpoint to clear the SSO session,
+      // then back to the home page
+      const appUrl = window.location.origin;
+      const logoutUrl = new URL(`${JANUA_ISSUER_URL}/logout`);
+      logoutUrl.searchParams.set('client_id', JANUA_CLIENT_ID);
+      logoutUrl.searchParams.set('post_logout_redirect_uri', appUrl);
+
+      // Give user a moment to see the confirmation, then redirect
       setTimeout(() => {
-        router.push('/');
-      }, 2000);
+        window.location.href = logoutUrl.toString();
+      }, 1500);
     } catch (error) {
       console.error('Sign out error:', error);
       setIsSigningOut(false);
@@ -47,7 +58,7 @@ export default function SignOutPage() {
 
             <h2 className="text-3xl font-bold mb-2">Signed Out Successfully</h2>
             <p className="text-muted-foreground mb-8">
-              You have been signed out of your account.
+              You have been signed out. Redirecting...
             </p>
 
             <div className="space-y-3">
