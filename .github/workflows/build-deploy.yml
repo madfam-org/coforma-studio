@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +28,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -43,6 +47,12 @@ jobs:
             ghcr.io/madfam-org/coforma-studio/web:latest
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
+
+      - name: Sign image with cosign
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: |
+          cosign sign --yes ghcr.io/madfam-org/coforma-studio/web@${{ steps.build-web.outputs.digest }}
 
       - name: Install kustomize
         uses: imranismail/setup-kustomize@v2
