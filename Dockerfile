@@ -9,7 +9,6 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 # Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/ ./apps/
 COPY packages/ ./packages/
 
 # Install dependencies
@@ -28,9 +27,9 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Copy built application (adjust path based on actual app structure)
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder /app/packages/web/.next/standalone ./
+COPY --from=builder /app/packages/web/.next/static ./packages/web/.next/static
+COPY --from=builder /app/packages/web/public ./packages/web/public
 
 USER nextjs
 
@@ -40,4 +39,4 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "packages/web/server.js"]
