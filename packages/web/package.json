@@ -21,7 +21,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "@tanstack/react-query": "^5.17.19",
-    "@trpc/client": "^10.45.0",
+    "@trpc/client": "^11.7.2",
     "@trpc/react-query": "^10.45.0",
     "@trpc/server": "^10.45.0",
     "jose": "^5.2.0",
