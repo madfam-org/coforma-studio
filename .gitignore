@@ -83,3 +83,5 @@ storybook-static/
 *.db
 *.sqlite
 *.sqlite3
+*.p12
+*.pfx
