@@ -1,6 +1,6 @@
 # Coforma Studio - Multi-stage Dockerfile for Turborepo monorepo
 # Build stage
-FROM node:20-alpine AS builder
+FROM ghcr.io/madfam-org/mirrors/node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM ghcr.io/madfam-org/mirrors/node:20-alpine AS runner
 
 WORKDIR /app
 
