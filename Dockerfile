@@ -8,11 +8,14 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 # Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc tsconfig.json ./
 COPY packages/ ./packages/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
+
+# Generate Prisma client (packages/types re-exports @prisma/client types)
+RUN cd packages/api && npx prisma generate || true
 
 # Build all packages
 ENV NEXT_TELEMETRY_DISABLED=1
