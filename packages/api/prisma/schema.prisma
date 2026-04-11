@@ -140,7 +140,7 @@ model Tenant {
   trialEnd               DateTime?
 
   // Relationships
-  users         User[]
+  memberships   TenantMembership[]
   cabs          CAB[]
   sessions      Session[]
   feedbackItems FeedbackItem[]
