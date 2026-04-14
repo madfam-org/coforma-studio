@@ -13,7 +13,9 @@ export class HealthController {
       await this.prisma.$queryRaw`SELECT 1`;
 
       return {
-        status: 'healthy',
+        status: 'ok',
+        service: 'coforma-studio',
+        version: '0.1.0',
         timestamp: new Date().toISOString(),
         services: {
           database: 'connected',
@@ -22,7 +24,9 @@ export class HealthController {
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: 'error',
+        service: 'coforma-studio',
+        version: '0.1.0',
         timestamp: new Date().toISOString(),
         services: {
           database: 'disconnected',

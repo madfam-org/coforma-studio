@@ -29,6 +29,8 @@ export class HealthController {
 
     return {
       status: databaseStatus === 'ok' ? 'ok' : 'error',
+      service: 'coforma-studio',
+      version: '0.1.0',
       timestamp,
       services: {
         database: databaseStatus,
