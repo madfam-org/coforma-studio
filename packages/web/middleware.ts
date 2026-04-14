@@ -8,12 +8,7 @@ import type { NextRequest } from 'next/server';
  * - Session verification
  * - RLS context setting
  */
-export function middleware(request: NextRequest) {
-  // Placeholder for multi-tenant routing logic
-  // TODO: Implement tenant detection from subdomain
-  // TODO: Implement session verification
-  // TODO: Set tenant context for API calls
-
+export function middleware(_request: NextRequest) {
   return NextResponse.next();
 }
 
