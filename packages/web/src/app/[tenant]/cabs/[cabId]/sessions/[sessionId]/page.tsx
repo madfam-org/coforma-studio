@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { trpc } from '../../../../../../lib/trpc';
 
 export default function SessionDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const utils = trpc.useUtils();
   const cabId = params.cabId as string;
   const sessionId = params.sessionId as string;
