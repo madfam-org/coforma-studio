@@ -3,17 +3,9 @@ kind: Kustomization
 namespace: coforma-studio
 resources:
 - namespace.yaml
-- api-deployment.yaml
-- api-service.yaml
 - web-deployment.yaml
 - web-service.yaml
-- admin-deployment.yaml
-- admin-service.yaml
 - network-policies.yaml
 images:
-- name: ghcr.io/madfam-org/coforma-studio/api
-  newName: ghcr.io/madfam-org/coforma-studio/api
 - name: ghcr.io/madfam-org/coforma-studio/web
   newName: ghcr.io/madfam-org/coforma-studio/web
-- name: ghcr.io/madfam-org/coforma-studio/admin
-  newName: ghcr.io/madfam-org/coforma-studio/admin
