@@ -7,6 +7,6 @@ resources:
 - web-service.yaml
 - network-policies.yaml
 images:
-- digest: sha256:ca6676be07a45fcb8fd3ee557a102001fea4cf7b2fcc5e39bfd32d9d17632e1a
+- digest: sha256:32c49ba32529da5cbfe8785e1ddd3dadefbe11de2fc50bd407595e9de63eb7de
   name: ghcr.io/madfam-org/coforma-studio/web
   newName: ghcr.io/madfam-org/coforma-studio/web
