@@ -46,6 +46,7 @@ spec:
             cpu: "500m"
             memory: "512Mi"
         securityContext:
+          privileged: false
           allowPrivilegeEscalation: false
           capabilities:
             drop: [ALL]
