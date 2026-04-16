@@ -7,7 +7,15 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Coforma Studio - Advisory-as-a-Service',
-  description: 'Transform your customer advisory boards into systematic growth engines',
+  description: 'Transform your customer advisory boards into systematic growth engines. By Innovaciones MADFAM.',
+  metadataBase: new URL('https://coforma.studio'),
+  openGraph: {
+    title: 'Coforma Studio - Advisory-as-a-Service',
+    description: 'Transform your customer advisory boards into systematic growth engines.',
+    url: 'https://coforma.studio',
+    siteName: 'Coforma by MADFAM',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
