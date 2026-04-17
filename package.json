@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/madfam-io/coforma-studio.git"
   },
-  "author": "Aureo Labs <hello@aureolabs.dev>",
+  "author": "Innovaciones MADFAM <hello@innovacionesmadfam.dev>",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=20.0.0",

@@ -2,7 +2,7 @@
 
 **Product:** Coforma Studio
 **Domain:** [coforma.studio](https://coforma.studio)
-**Developer:** Aureo Labs ([aureolabs.dev](https://aureolabs.dev))
+**Developer:** Innovaciones MADFAM ([innovacionesmadfam.dev](https://innovacionesmadfam.dev))
 **Parent Company:** Innovaciones MADFAM S.A.S. de C.V. ([madfam.io](https://madfam.io))
 
 ---

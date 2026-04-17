@@ -1,7 +1,7 @@
 # Coforma Studio
 
 **Domain:** [coforma.studio](https://coforma.studio)
-**Developer:** Aureo Labs ([aureolabs.dev](https://aureolabs.dev))
+**Developer:** Innovaciones MADFAM ([innovacionesmadfam.dev](https://innovacionesmadfam.dev))
 **Parent Company:** Innovaciones MADFAM S.A.S. de C.V. ([madfam.io](https://madfam.io))
 
 ---
@@ -225,5 +225,5 @@ Copyright © 2025 Innovaciones MADFAM S.A.S. de C.V.
 
 - **Documentation**: See [docs/](./docs/) directory
 - **Issues**: [GitHub Issues](https://github.com/madfam-io/coforma-studio/issues)
-- **Email**: hello@aureolabs.dev
-- **Website**: [aureolabs.dev](https://aureolabs.dev)
+- **Email**: hello@innovacionesmadfam.dev
+- **Website**: [innovacionesmadfam.dev](https://innovacionesmadfam.dev)

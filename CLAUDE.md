@@ -6,7 +6,7 @@
 
 **Status**: 🟡 Foundation Phase (40% Complete)  
 **Purpose**: Multi-tenant SaaS for creating and managing Customer Advisory Boards (CABs)  
-**License**: Proprietary (Aureo Labs)  
+**License**: Proprietary (Innovaciones MADFAM)  
 **Domain**: [coforma.studio](https://coforma.studio)
 
 Coforma Studio transforms Customer Advisory Boards into **growth engines** that accelerate product-market fit, strengthen loyalty, and reduce customer acquisition costs. Built with a LATAM-first ethos for global scalability.
