@@ -27,7 +27,7 @@ export default function Home() {
           </a>
         </div>
         <div className="mt-16 text-sm text-muted-foreground">
-          <p>🚀 Status: Pre-Alpha | Built with ❤️ by Aureo Labs</p>
+          <p>🚀 Status: Pre-Alpha | Built with ❤️ by Innovaciones MADFAM</p>
         </div>
       </div>
     </main>

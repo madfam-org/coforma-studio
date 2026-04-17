@@ -2,7 +2,7 @@
 
 **Product:** Coforma Studio
 **Domain:** [coforma.studio](https://coforma.studio)
-**Developer:** Aureo Labs ([aureolabs.dev](https://aureolabs.dev))
+**Developer:** Innovaciones MADFAM ([innovacionesmadfam.dev](https://innovacionesmadfam.dev))
 **Parent Company:** Innovaciones MADFAM S.A.S. de C.V. ([madfam.io](https://madfam.io))
 
 ---
@@ -15,7 +15,7 @@ This document defines the **operating model** for Coforma Studio. It translates 
 
 ## 2. Org Model & Roles
 
-* **Product & Engineering (Aureo Labs):**
+* **Product & Engineering (Innovaciones MADFAM):**
 
   * Owns product roadmap, design, development, infra, and QA.
   * Ensures compliance, scalability, and UX excellence.
@@ -66,7 +66,7 @@ This document defines the **operating model** for Coforma Studio. It translates 
 
 ## 5. Metrics & Ownership
 
-* **Product (Aureo Labs):**
+* **Product (Innovaciones MADFAM):**
 
   * Feedback-to-Implementation Impact Rate (FIIR).
   * P95 latency & uptime.

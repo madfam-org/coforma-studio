@@ -607,8 +607,8 @@ pnpm --filter=api prisma migrate reset
 ## Contact
 
 - **On-Call Engineer**: Slack #oncall channel
-- **DevOps**: devops@aureolabs.dev
-- **Engineering Lead**: engineering@aureolabs.dev
+- **DevOps**: devops@innovacionesmadfam.dev
+- **Engineering Lead**: engineering@innovacionesmadfam.dev
 
 ---
 

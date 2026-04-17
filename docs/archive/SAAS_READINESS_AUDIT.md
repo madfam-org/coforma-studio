@@ -1175,7 +1175,7 @@ Clear tiered model aligned with value metrics:
 ### Public Beta Launch (Weeks 9-12)
 
 - [ ] Product Hunt launch
-- [ ] LinkedIn announcement (MADFAM + Aureo Labs networks)
+- [ ] LinkedIn announcement (MADFAM + Innovaciones MADFAM networks)
 - [ ] Blog post: "Why Every B2B Company Needs a CAB"
 - [ ] Webinar: "How to Run a Customer Advisory Board"
 - [ ] Press release (LATAM tech media)
