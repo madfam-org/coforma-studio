@@ -28,6 +28,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
+    "postinstall": "pnpm --filter=api exec prisma generate",
     "prepare": "husky install",
     "db:migrate": "pnpm --filter=api prisma migrate dev",
     "db:deploy": "pnpm --filter=api prisma migrate deploy",
