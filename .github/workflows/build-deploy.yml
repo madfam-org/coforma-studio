@@ -63,7 +63,7 @@ jobs:
           cosign sign --yes ghcr.io/madfam-org/coforma-studio/web@${{ steps.build-web.outputs.digest }}
 
       - name: Install kustomize
-        uses: imranismail/setup-kustomize@v2
+        uses: imranismail/setup-kustomize@v3
 
       - name: Update web image digest
         working-directory: infra/k8s/production
