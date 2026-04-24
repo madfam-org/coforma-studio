@@ -56,7 +56,7 @@
     "@types/node": "^20.11.0",
     "@vitest/coverage-v8": "^1.2.0",
     "prisma": "6.1.0",
-    "tsx": "^4.7.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.2",
     "vitest": "^1.2.0"
   },
