@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
+import { PhyneCrmRelayService } from '../../integrations/phynecrm/phynecrm-relay.service';
 import { PrismaService } from '../../lib/prisma/prisma.service';
 import { LoggerService } from '../../lib/logger/logger.service';
 import {
@@ -24,7 +25,34 @@ export class CABMemberService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly logger: LoggerService,
+    private readonly phyneCrmRelay: PhyneCrmRelayService,
   ) {}
+
+  /**
+   * Fire-and-forget PhyneCRM emit. Wraps in try/catch as a belt-and-
+   * suspenders even though the relay itself never throws. Uses the
+   * tenant's `phynecrmTenantId` mapping; skips if unset.
+   */
+  private async emitToPhynecrm(
+    tenantId: string,
+    fire: (phynecrmTenantId: string) => Promise<unknown>,
+  ): Promise<void> {
+    try {
+      const tenant = await this.prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { phynecrmTenantId: true },
+      });
+      if (!tenant?.phynecrmTenantId) {
+        return; // Tenant not federated to PhyneCRM yet; silent skip.
+      }
+      await fire(tenant.phynecrmTenantId);
+    } catch (err) {
+      this.logger.warn(
+        `PhyneCRM relay emit failed (non-fatal): ${(err as Error).message}`,
+        'CABMemberService',
+      );
+    }
+  }
 
   /**
    * Add an existing user to a CAB
@@ -108,6 +136,20 @@ export class CABMemberService {
       });
 
       this.logger.log(`Member added successfully: ${member.id}`, 'CABMemberService');
+
+      // Fan out to PhyneCRM (best-effort; never throws into this path).
+      void this.emitToPhynecrm(tenantId, (phynecrmTenantId) =>
+        this.phyneCrmRelay.emitMemberJoined(phynecrmTenantId, {
+          membershipId: member.id,
+          cabId: cab.id,
+          cabSlug: cab.slug,
+          userEmail: member.user.email,
+          userName: member.user.name,
+          company: member.company,
+          title: member.title,
+          phynecrmContactId: null,
+        }),
+      );
 
       return member;
     } catch (error) {

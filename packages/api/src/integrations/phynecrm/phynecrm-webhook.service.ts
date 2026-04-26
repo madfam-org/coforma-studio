@@ -21,8 +21,8 @@ import { LoggerService } from '../../lib/logger/logger.service';
 import { PrismaService } from '../../lib/prisma/prisma.service';
 
 // Header name matches the convention used by phyne-crm's
-// `validateMadfamSignature` helper and the cotiza/RouteCraft emitters.
-const SIGNATURE_HEADER = 'x-madfam-signature';
+// `validateMadfamSignature` helper and the cotiza/RouteCraft emitters
+// — see the @Headers('x-madfam-signature') decorator in the controller.
 const SIGNATURE_VERSION = 'v1';
 const MAX_SIGNATURE_AGE_SECONDS = 5 * 60; // 5 minutes
 
