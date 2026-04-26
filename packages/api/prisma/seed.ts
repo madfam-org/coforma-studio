@@ -1,11 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 
+import { seedMadfamInternalTenant } from './seeds/madfam-internal-tenant';
+
 const prisma = new PrismaClient();
 
-async function main() {
-  console.log('🌱 Seeding database...');
+/**
+ * Parses CLI flags forwarded after `--`:
+ *   pnpm prisma db seed -- --tenant=madfam-internal
+ * If --tenant is omitted, runs the default demo seed only.
+ */
+function getRequestedTenant(): string | null {
+  const arg = process.argv.find((a) => a.startsWith('--tenant='));
+  return arg ? arg.split('=')[1] : null;
+}
 
-  // Create a demo tenant
+async function seedDemo() {
   const tenant = await prisma.tenant.upsert({
     where: { slug: 'demo' },
     update: {},
@@ -16,14 +25,24 @@ async function main() {
       timezone: 'America/Mexico_City',
     },
   });
-
   console.log('✅ Created demo tenant:', tenant.slug);
+}
 
-  // Add more seed data as needed
-  // - Demo users
-  // - Demo CABs
-  // - Demo sessions
-  // etc.
+async function main() {
+  console.log('🌱 Seeding database...');
+
+  const requested = getRequestedTenant();
+
+  if (requested === 'madfam-internal') {
+    await seedMadfamInternalTenant();
+  } else if (requested === 'demo' || requested === null) {
+    await seedDemo();
+  } else {
+    console.warn(
+      `⚠️  Unknown --tenant=${requested}. Known: demo, madfam-internal. Running demo seed.`,
+    );
+    await seedDemo();
+  }
 
   console.log('🎉 Seeding complete!');
 }

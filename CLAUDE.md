@@ -317,4 +317,55 @@ pnpm dev
 
 ---
 
+## Internal MADFAM Dogfooding
+
+Coforma Studio's first tenant is **MADFAM itself**. Per **RFC 0013 Wave PMF-3** and
+**ADR-003** (`internal-devops/decisions/adr-003-tulana-coforma-integration.md`), we
+dogfood Coforma to run our own CABs while the platform matures from 40% → 80%.
+
+### Tenant of record
+
+| Field | Value |
+|---|---|
+| Tenant slug | `madfam-internal` |
+| Tenant name | MADFAM Internal — PMF Measurement |
+| Visibility | Private (no public listing) |
+| Owner | `aldoruizluna@madfam.io` (TenantRole.ADMIN) |
+| Seed | `packages/api/prisma/seeds/madfam-internal-tenant.ts` |
+
+### Active CABs
+
+- **`tezca-spring-2026`** — Tezca CAB, Spring 2026 cohort, 5–15 members.
+  Quarterly Sean Ellis PMF interviews with roadmap-linkage to Tezca Linear/Jira.
+  Outreach playbook: `docs/pmf/tezca-cab-candidate-identification.md`.
+
+### Seeded templates
+
+- **Sean Ellis PMF survey** (`sean-ellis-pmf-v1`) — structured 30-min session with
+  5 questions (Q2/Q3 conditional on Q1 = "very disappointed"). Template lives in
+  `packages/api/prisma/seeds/templates/sean-ellis-pmf-template.ts` and is stamped
+  onto seeded sessions' `agendaItems` JSON column.
+
+### Outbound webhook to Tulana
+
+When a CAB session is marked `COMPLETED`, Coforma fires a signed (HMAC-SHA256)
+webhook to Tulana's `/v1/pmf/coforma-event` endpoint. The webhook is fire-and-forget
+— delivery failures are logged but never roll back the session-completion transaction.
+
+- Service: `packages/api/src/integrations/tulana/cab-event-webhook.service.ts`
+- Module: `packages/api/src/integrations/tulana/tulana.module.ts`
+- Required env: `TULANA_PMF_WEBHOOK_SECRET` (must match Tulana side
+  `COFORMA_WEBHOOK_SECRET`), `TULANA_API_URL` (defaults to
+  `https://api.tulana.madfam.io`).
+
+Sentiment scoring is v0.1 (Q1 weight + neutral text contribution). Real NLP
+classification of free-text answers is deferred to v0.2.
+
+### References
+
+- RFC 0013 Wave PMF-3 — PMF Measurement via Coforma + Tulana
+- ADR-003 — `internal-devops/decisions/adr-003-tulana-coforma-integration.md`
+
+---
+
 *Coforma Studio - Advisory-as-a-Service | CABs as Growth Engines*
