@@ -109,6 +109,28 @@ enum CaseStudyStatus {
   PUBLISHED
 }
 
+/// PersonaRole - Who the member represents in their org (a16z framework).
+/// Sessions reviewing strategic decisions should require BUYER attendance;
+/// product feedback sessions should require END_USER. Used by the validator
+/// in session.service.ts.
+enum PersonaRole {
+  BUYER         // Holds budget / signs the contract.
+  END_USER      // Uses the product day-to-day.
+  CHAMPION      // Internal advocate making the case for adoption.
+  EXECUTIVE     // C-suite sponsor with strategic context.
+}
+
+/// MembershipExitStatus - Lifecycle outcome of a design-partner engagement.
+/// Driven by a16z framing: success = GRADUATED_TO_PAID. ACTIVE while the
+/// cohort window is open; CHURNED when the partner disengages without
+/// converting; RENEWED for partners who extend a second cohort window.
+enum MembershipExitStatus {
+  ACTIVE
+  GRADUATED_TO_PAID
+  CHURNED
+  RENEWED
+}
+
 // =============================================================================
 // CORE MODELS
 // =============================================================================
@@ -261,7 +283,15 @@ model CAB {
   // Settings
   isActive     Boolean @default(true)
   maxMembers   Int?    // Optional member cap
+  minMembers   Int?    // Floor: warn if active membership drops below (a16z 5-10 portfolio)
   requiresNDA  Boolean @default(false)
+
+  // Engagement window (a16z): every cohort runs for a defined period
+  // (1/3/6 months typical) with a clean exit toward paid or churn at the end.
+  // Nullable so legacy/open-ended CABs don't break.
+  cohortLabel  String?  // e.g. "Tezca Spring 2026", "Q3 Pilot Wave"
+  startDate    DateTime?
+  endDate      DateTime?
 
   // Relationships
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -289,6 +319,27 @@ model CABMembership {
   ndaSigned    Boolean  @default(false)
   ndaSignedAt  DateTime?
 
+  // a16z persona role — drives session-attendance validation. Required
+  // sessions ("strategic review") should fail validation without a BUYER
+  // attendee; product-feedback sessions need END_USER. Nullable until
+  // backfill is complete.
+  personaRole  PersonaRole?
+
+  // a16z 3-criterion intake screen. Each scored 0-10 by the operator at
+  // candidate intake; combined with justification text (free-form) so the
+  // founder's reasoning survives the handoff to the next operator.
+  representativenessScore Int?    // Mirrors the ICP — segment, geo, persona
+  urgencyScore            Int?    // Already hacking workarounds / has tried competitors
+  capacityScore           Int?    // Champion identified, data ready, time committed
+  intakeJustification     String? @db.Text // Why these scores
+
+  // Lifecycle outcome — stays ACTIVE until cohort end, then operator sets
+  // GRADUATED_TO_PAID / CHURNED / RENEWED. Drives the badge-vs-no-badge
+  // logic (see follow-up in feature/badge-graduation-link).
+  exitStatus     MembershipExitStatus @default(ACTIVE)
+  exitedAt       DateTime?
+  exitNote       String? @db.Text
+
   // Discount plan assignment
   discountPlanId String?   @db.Uuid
   discountPlan   DiscountPlan? @relation(fields: [discountPlanId], references: [id], onDelete: SetNull)
@@ -300,6 +351,7 @@ model CABMembership {
   @@unique([cabId, userId])
   @@index([cabId])
   @@index([userId])
+  @@index([cabId, exitStatus])
   @@map("cab_memberships")
 }
 
