@@ -80,6 +80,7 @@ enum IntegrationProvider {
   GOOGLE_CALENDAR
   HUBSPOT
   SALESFORCE
+  PHYNECRM        // MADFAM ecosystem CRM (engagement source-of-truth)
 }
 
 enum IntegrationStatus {
@@ -155,6 +156,11 @@ model Tenant {
   logo      String? // Cloudflare R2 URL
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // PhyneCRM federation: a Coforma tenant maps to a PhyneCRM tenant
+  // (via PhyneCRM's tenantId string). Nullable so MADFAM-internal
+  // tenants without a CRM presence don't break.
+  phynecrmTenantId String? @unique  // PhyneCRM tenantId (e.g. "madfam")
 
   // Branding & Customization
   brandColor      String? // Hex color (e.g., "#3B82F6")
@@ -330,26 +336,15 @@ model CABMembership {
   ndaSigned    Boolean  @default(false)
   ndaSignedAt  DateTime?
 
-  // a16z persona role — drives session-attendance validation. Required
-  // sessions ("strategic review") should fail validation without a BUYER
-  // attendee; product-feedback sessions need END_USER. Nullable until
-  // backfill is complete.
-  personaRole  PersonaRole?
-
-  // a16z 3-criterion intake screen. Each scored 0-10 by the operator at
-  // candidate intake; combined with justification text (free-form) so the
-  // founder's reasoning survives the handoff to the next operator.
-  representativenessScore Int?    // Mirrors the ICP — segment, geo, persona
-  urgencyScore            Int?    // Already hacking workarounds / has tried competitors
-  capacityScore           Int?    // Champion identified, data ready, time committed
-  intakeJustification     String? @db.Text // Why these scores
-
-  // Lifecycle outcome — stays ACTIVE until cohort end, then operator sets
-  // GRADUATED_TO_PAID / CHURNED / RENEWED. Drives the badge-vs-no-badge
-  // logic (see follow-up in feature/badge-graduation-link).
-  exitStatus     MembershipExitStatus @default(ACTIVE)
-  exitedAt       DateTime?
-  exitNote       String? @db.Text
+  // PhyneCRM federation. Filled when:
+  //  - Inbound webhook receives a PhyneCRM contact and the operator
+  //    promotes it into this CAB, or
+  //  - Outbound emitter creates a PhyneCRM contact when a member is
+  //    added directly through Coforma.
+  // Nullable so legacy memberships don't break. Indexed for dedup
+  // lookups during inbound webhook processing.
+  phynecrmContactId    String?
+  phynecrmEngagementId String?  // Optional — links to a PhyneCRM engagement
 
   // Discount plan assignment
   discountPlanId String?   @db.Uuid
@@ -366,7 +361,7 @@ model CABMembership {
   @@unique([cabId, userId])
   @@index([cabId])
   @@index([userId])
-  @@index([cabId, exitStatus])
+  @@index([phynecrmContactId])
   @@map("cab_memberships")
 }
 
