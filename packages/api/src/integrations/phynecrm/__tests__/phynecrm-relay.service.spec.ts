@@ -104,7 +104,7 @@ describe('PhyneCrmRelayService', () => {
     expect(options.headers['x-coforma-tenant-id']).toBe('tenant-1');
 
     // Signature shape
-    const sig = options.headers['madfam-signature'];
+    const sig = options.headers['x-madfam-signature'];
     expect(sig).toMatch(/^t=\d+,v1=[a-f0-9]{64}$/);
 
     // Verify HMAC with the same secret round-trips

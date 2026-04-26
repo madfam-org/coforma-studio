@@ -21,7 +21,10 @@ import * as crypto from 'crypto';
 
 import { LoggerService } from '../../lib/logger/logger.service';
 
-const SIGNATURE_HEADER = 'madfam-signature';
+// Header name matches the convention used by phyne-crm's
+// `validateMadfamSignature` helper and the cotiza/RouteCraft emitters,
+// so receivers can use one shared verifier.
+const SIGNATURE_HEADER = 'x-madfam-signature';
 const IDEMPOTENCY_HEADER = 'idempotency-key';
 const TENANT_HEADER = 'x-coforma-tenant-id';
 
