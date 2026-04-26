@@ -336,6 +336,24 @@ model CABMembership {
   ndaSigned    Boolean  @default(false)
   ndaSignedAt  DateTime?
 
+  // a16z design-partner intake (3-criterion framework). All nullable to
+  // keep legacy memberships working; new memberships should be scored
+  // (representativeness/urgency/capacity 0-10) before promoting from
+  // candidate to active. See migration 20260426000000.
+  personaRole             PersonaRole?
+  representativenessScore Int?
+  urgencyScore            Int?
+  capacityScore           Int?
+  intakeJustification     String?              @db.Text
+
+  // a16z lifecycle. ACTIVE while the cohort window is open; transitions
+  // to GRADUATED_TO_PAID / CHURNED / RENEWED at exit. exitedAt + exitNote
+  // are set together with exitStatus by the exit mutation route. Schema
+  // matches migration 20260426000000.
+  exitStatus  MembershipExitStatus @default(ACTIVE)
+  exitedAt    DateTime?
+  exitNote    String?              @db.Text
+
   // PhyneCRM federation. Filled when:
   //  - Inbound webhook receives a PhyneCRM contact and the operator
   //    promotes it into this CAB, or
@@ -362,6 +380,7 @@ model CABMembership {
   @@index([cabId])
   @@index([userId])
   @@index([phynecrmContactId])
+  @@index([cabId, exitStatus])
   @@map("cab_memberships")
 }
 
