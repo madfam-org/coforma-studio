@@ -131,6 +131,17 @@ enum MembershipExitStatus {
   RENEWED
 }
 
+/// EngagementCadence - How often the design partner is expected to engage.
+/// a16z's default recommendation is BIWEEKLY for active design-partner
+/// cohorts. WEEKLY for very-early-stage discovery; MONTHLY for late-stage
+/// renewal-track partners.
+enum EngagementCadence {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  QUARTERLY
+}
+
 // =============================================================================
 // CORE MODELS
 // =============================================================================
@@ -344,6 +355,10 @@ model CABMembership {
   discountPlanId String?   @db.Uuid
   discountPlan   DiscountPlan? @relation(fields: [discountPlanId], references: [id], onDelete: SetNull)
 
+  // a16z light-contract: every active design partner should have an
+  // explicit engagement agreement (cadence + hours/month + expiry).
+  partnershipAgreement PartnershipAgreement?
+
   // Relationships
   cab  CAB  @relation(fields: [cabId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -353,6 +368,55 @@ model CABMembership {
   @@index([userId])
   @@index([cabId, exitStatus])
   @@map("cab_memberships")
+}
+
+/// PartnershipAgreement - a16z's "light contract" for a design partner.
+///
+/// The article is explicit: every design partner should have a written
+/// agreement covering scope, cadence, expected time commitment, and
+/// expiry. The contract isn't legalese — it's an alignment artifact.
+/// `requiresNDA` on the parent CAB is a coarse Yes/No; this model
+/// captures the per-membership specifics that the audit calls out as
+/// missing.
+///
+/// 1:1 with CABMembership. Optional — historical CABs created before
+/// this model shipped don't get back-filled.
+model PartnershipAgreement {
+  id              String            @id @default(uuid()) @db.Uuid
+  membershipId    String            @unique @db.Uuid
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Scope: 1-3 sentence description of what this partner is being asked
+  // to participate in. Free-form because the discipline is in writing
+  // it down, not in the schema.
+  scope           String            @db.Text
+
+  // Cadence + time budget. `expectedHoursPerMonth` is the planning
+  // anchor — operators flag drift in the engagement-health computed
+  // field when actual attendance falls below it.
+  cadence         EngagementCadence @default(BIWEEKLY)
+  expectedHoursPerMonth Int
+
+  // Window. Mirrors CAB.{startDate,endDate} semantics but per-membership
+  // (a partner can join mid-cohort).
+  effectiveStart  DateTime
+  effectiveEnd    DateTime?
+
+  // Acceptance trail — equivalent to ndaSigned/ndaSignedAt but for the
+  // partnership agreement itself. NULL means not yet accepted.
+  acceptedAt      DateTime?
+  acceptedByEmail String?           // Free-form — partner-side signer
+
+  // Operator's notes on why this scope/cadence was set. Survives operator
+  // turnover: the next person can read why we asked for monthly instead
+  // of biweekly without asking the founder.
+  notes           String?           @db.Text
+
+  membership      CABMembership     @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@index([effectiveEnd])
+  @@map("partnership_agreements")
 }
 
 // =============================================================================
@@ -379,6 +443,13 @@ model Session {
   meetingLink String? // Zoom, Google Meet, etc.
   recordingUrl String? // Cloudflare R2 URL
   agendaItems Json? // Array of {title, duration, completed}
+
+  // a16z required-attendance gate. JSON array of PersonaRole values that
+  // MUST be represented in attendees for this session. Strategic-review
+  // sessions should require ['BUYER']; product-feedback should require
+  // ['END_USER']. Validator in session.service.ts blocks scheduling if
+  // unmet. Empty array = no requirement (legacy sessions).
+  requiredRoles Json? // PersonaRole[] — see schema notes
 
   // Relationships
   tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
