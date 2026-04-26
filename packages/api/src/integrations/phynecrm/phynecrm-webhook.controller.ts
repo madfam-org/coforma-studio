@@ -26,7 +26,7 @@ export class PhyneCrmWebhookController {
   @HttpCode(HttpStatus.OK)
   async receive(
     @Req() req: Request,
-    @Headers('madfam-signature') signatureHeader: string | undefined,
+    @Headers('x-madfam-signature') signatureHeader: string | undefined,
     @Body() _body: unknown,
   ): Promise<{ received: boolean; processed: boolean; note?: string }> {
     // We need the raw body for HMAC. NestJS gives us the parsed JSON in
