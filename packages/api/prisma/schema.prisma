@@ -80,6 +80,7 @@ enum IntegrationProvider {
   GOOGLE_CALENDAR
   HUBSPOT
   SALESFORCE
+  PHYNECRM        // MADFAM ecosystem CRM (engagement source-of-truth)
 }
 
 enum IntegrationStatus {
@@ -122,6 +123,11 @@ model Tenant {
   logo      String? // Cloudflare R2 URL
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // PhyneCRM federation: a Coforma tenant maps to a PhyneCRM tenant
+  // (via PhyneCRM's tenantId string). Nullable so MADFAM-internal
+  // tenants without a CRM presence don't break.
+  phynecrmTenantId String? @unique  // PhyneCRM tenantId (e.g. "madfam")
 
   // Branding & Customization
   brandColor      String? // Hex color (e.g., "#3B82F6")
@@ -289,6 +295,16 @@ model CABMembership {
   ndaSigned    Boolean  @default(false)
   ndaSignedAt  DateTime?
 
+  // PhyneCRM federation. Filled when:
+  //  - Inbound webhook receives a PhyneCRM contact and the operator
+  //    promotes it into this CAB, or
+  //  - Outbound emitter creates a PhyneCRM contact when a member is
+  //    added directly through Coforma.
+  // Nullable so legacy memberships don't break. Indexed for dedup
+  // lookups during inbound webhook processing.
+  phynecrmContactId    String?
+  phynecrmEngagementId String?  // Optional — links to a PhyneCRM engagement
+
   // Discount plan assignment
   discountPlanId String?   @db.Uuid
   discountPlan   DiscountPlan? @relation(fields: [discountPlanId], references: [id], onDelete: SetNull)
@@ -300,6 +316,7 @@ model CABMembership {
   @@unique([cabId, userId])
   @@index([cabId])
   @@index([userId])
+  @@index([phynecrmContactId])
   @@map("cab_memberships")
 }
 
