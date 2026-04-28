@@ -278,6 +278,9 @@ importers:
 
   packages/web:
     dependencies:
+      '@coforma/api':
+        specifier: workspace:*
+        version: link:../api
       '@coforma/types':
         specifier: workspace:*
         version: link:../types
