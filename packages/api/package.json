@@ -4,6 +4,17 @@
   "private": true,
   "description": "NestJS backend API for Coforma Studio",
   "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "default": "./dist/main.js"
+    },
+    "./trpc-router": {
+      "types": "./dist/trpc/trpc.router.d.ts",
+      "default": "./dist/trpc/trpc.router.js"
+    }
+  },
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",

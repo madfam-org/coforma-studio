@@ -17,6 +17,7 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@coforma/api": "workspace:*",
     "@coforma/types": "workspace:*",
     "@coforma/ui": "workspace:*",
     "@hookform/resolvers": "^3.3.4",
