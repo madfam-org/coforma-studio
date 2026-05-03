@@ -356,7 +356,7 @@ webhook to Tulana's `/v1/pmf/coforma-event` endpoint. The webhook is fire-and-fo
 - Module: `packages/api/src/integrations/tulana/tulana.module.ts`
 - Required env: `TULANA_PMF_WEBHOOK_SECRET` (must match Tulana side
   `COFORMA_WEBHOOK_SECRET`), `TULANA_API_URL` (defaults to
-  `https://api.tulana.madfam.io`).
+  `https://tulana-api.madfam.io`).
 
 Sentiment scoring is v0.1 (Q1 weight + neutral text contribution). Real NLP
 classification of free-text answers is deferred to v0.2.
