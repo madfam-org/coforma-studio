@@ -151,7 +151,7 @@ export async function seedMadfamInternalTenant(): Promise<{
   console.log('');
   console.log('   Next operator steps:');
   console.log('   1. Set TULANA_PMF_WEBHOOK_SECRET env var (must match Tulana COFORMA_WEBHOOK_SECRET)');
-  console.log('   2. Set TULANA_API_URL env var (default: https://api.tulana.madfam.io)');
+  console.log('   2. Set TULANA_API_URL env var (default: https://tulana-api.madfam.io)');
   console.log('   3. Pull first 30 Tezca API key users with ≥10 calls in last 30d');
   console.log('   4. Send founder-approved invites for week of 2026-05-15');
   console.log('');

@@ -32,7 +32,7 @@ import type { Session } from '@prisma/client';
 import { LoggerService } from '../../lib/logger/logger.service';
 
 const SERVICE_NAME = 'TulanaCabEventWebhookService';
-const DEFAULT_TULANA_URL = 'https://api.tulana.madfam.io';
+const DEFAULT_TULANA_URL = 'https://tulana-api.madfam.io';
 const DEFAULT_TIMEOUT_MS = 5_000;
 const NEUTRAL_SENTIMENT = 0.5;
 const KNOWN_TEMPLATE_IDS = new Set(['sean-ellis-pmf-v1']);
