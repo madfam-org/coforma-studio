@@ -23,7 +23,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@janua/react-sdk": "^0.1.0",
     "@sentry/nextjs": "^7.99.0",
-    "@tanstack/react-query": "^4.36.1",
+    "@tanstack/react-query": "^5.100.9",
     "@trpc/client": "^10.45.0",
     "@trpc/react-query": "^10.45.0",
     "@trpc/server": "^10.45.0",
