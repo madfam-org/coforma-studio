@@ -1,9 +1,9 @@
 /**
- * POST /api/v1/webhooks/phynecrm
+ * POST /api/v1/webhooks/phyndcrm
  *
- * Receives signed webhook events from PhyneCRM. Always returns 200
+ * Receives signed webhook events from PhyndCRM. Always returns 200
  * after successful signature verification — handler-level failures are
- * logged but not propagated, so PhyneCRM's retry logic doesn't loop.
+ * logged but not propagated, so PhyndCRM's retry logic doesn't loop.
  * Signature failures return 401 / 400.
  */
 
@@ -11,9 +11,9 @@ import { Body, Controller, Headers, HttpCode, HttpStatus, Post, Req, Unauthorize
 import type { Request } from 'express';
 
 import { LoggerService } from '../../lib/logger/logger.service';
-import { PhyneCrmEvent, PhyneCrmWebhookService } from './phynecrm-webhook.service';
+import { PhyneCrmEvent, PhyneCrmWebhookService } from './phyndcrm-webhook.service';
 
-@Controller('api/v1/webhooks/phynecrm')
+@Controller('api/v1/webhooks/phyndcrm')
 export class PhyneCrmWebhookController {
   private readonly context = 'PhyneCrmWebhookController';
 
@@ -41,7 +41,7 @@ export class PhyneCrmWebhookController {
     const verification = this.service.verifySignature(rawBody, signatureHeader);
     if (!verification.ok) {
       this.logger.warn(
-        `PhyneCRM webhook signature rejected: ${verification.reason}`,
+        `PhyndCRM webhook signature rejected: ${verification.reason}`,
         this.context,
       );
       throw new UnauthorizedException({ error: 'invalid_signature', reason: verification.reason });
@@ -52,7 +52,7 @@ export class PhyneCrmWebhookController {
       // Verified-but-malformed bodies still log success (signature was
       // valid) and ack so producers don't retry; the operator gets the
       // log line.
-      this.logger.warn('PhyneCRM webhook payload missing type/data', this.context);
+      this.logger.warn('PhyndCRM webhook payload missing type/data', this.context);
       return { received: true, processed: false, note: 'malformed_payload' };
     }
 

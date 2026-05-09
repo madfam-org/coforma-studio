@@ -21,8 +21,8 @@ A candidate qualifies if **any** of the following is true:
    - Source: query against `apps/api/billing_views.py` data in the Tezca repo (operator pulls manually for v0.1; automation deferred).
    - Filter: exclude internal MADFAM tokens, monitoring probes, smoke-test keys.
 
-2. **PhyneCRM "engaged" lead** — opened ≥3 outreach emails OR replied to any outreach in the last 90 days.
-   - Source: PhyneCRM `engagement.score >= 0.3` dashboard segment.
+2. **PhyndCRM "engaged" lead** — opened ≥3 outreach emails OR replied to any outreach in the last 90 days.
+   - Source: PhyndCRM `engagement.score >= 0.3` dashboard segment.
 
 3. **Self-nominated via in-app smile/frown widget** (Tulana feed).
    - Source: Tulana `pmf.smile_frown_responses` where `user_opted_in_to_research = true`.
@@ -80,8 +80,8 @@ If a cohort can't hit a target, log it in the kickoff session minutes and adjust
 3. **On booking:** Calendly webhook → Coforma creates a `Session` record under
    `cab: tezca-spring-2026`, stamps the Sean Ellis template onto `Session.agendaItems`,
    and creates a `SessionAttendee`.
-4. **On booking:** Coforma fires a sibling event into PhyneCRM as
-   `engagement.event = "cab_invite_accepted"` (existing PhyneCRM webhook ingest, no new
+4. **On booking:** Coforma fires a sibling event into PhyndCRM as
+   `engagement.event = "cab_invite_accepted"` (existing PhyndCRM webhook ingest, no new
    surface needed).
 5. **On session completion:** Facilitator marks the session `COMPLETED` in Coforma; the
    outbound webhook to Tulana fires automatically (see ADR-003 + `cab-event-webhook.service.ts`).
@@ -95,7 +95,7 @@ If a cohort can't hit a target, log it in the kickoff session minutes and adjust
 | Date | Action | Owner |
 |---|---|---|
 | 2026-04-28 | Pull Tezca API user list (≥10 calls / 30d) | Operator |
-| 2026-04-29 | Cross-reference with PhyneCRM engaged segment | Operator |
+| 2026-04-29 | Cross-reference with PhyndCRM engaged segment | Operator |
 | 2026-04-30 | Founder approves 30-candidate outreach list | Founder |
 | 2026-05-01 | First wave of 30 invites sent | Founder |
 | 2026-05-08 | Reminder wave to non-responders | Operator |

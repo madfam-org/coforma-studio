@@ -1,5 +1,5 @@
 /**
- * Tests for PhyneCRM inbound webhook signature verification.
+ * Tests for PhyndCRM inbound webhook signature verification.
  *
  * Signature failures MUST be rejected before any business logic runs —
  * mismatched, expired, malformed, and missing-secret cases all need
@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 
 import { LoggerService } from '../../../lib/logger/logger.service';
 import { PrismaService } from '../../../lib/prisma/prisma.service';
-import { PhyneCrmWebhookService } from '../phynecrm-webhook.service';
+import { PhyneCrmWebhookService } from '../phyndcrm-webhook.service';
 
 const TEST_SECRET = 'test-secret-for-hmac-only-not-real-key';
 

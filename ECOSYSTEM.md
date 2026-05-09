@@ -37,7 +37,7 @@ Coforma Studio is the SaaS platform for companies to create, manage, and scale C
 ### Downstream consumers (this repo is consumed by)
 
 - tenant brand ops
-- phyne-crm (feedback signals federated into client portal)
+- phynd-crm (feedback signals federated into client portal)
 
 ### Key environment variables
 
@@ -66,7 +66,7 @@ below is embedded here so this document stands alone.
 | **Cotiza** | `madfam-org/digifab-quoting` | MADFAM's quoting engine (fabrication + services) |
 | **Forgesight** | `madfam-org/forgesight` | Digital fabrication industry intelligence (pricing/vendor feed to Cotiza) |
 | **Pravara MES** | `madfam-org/pravara-mes` | Fabrication-node routing and dispatch (physical jobs) |
-| **PhyneCRM** | `madfam-org/phyne-crm` | Client-facing deliverables portal (single pane of glass per engagement) |
+| **PhyndCRM** | `madfam-org/phynd-crm` | Client-facing deliverables portal (single pane of glass per engagement) |
 | **Fortuna** | `madfam-org/fortuna` | Problem intelligence / zeitgeist analysis |
 | **Avala** | `madfam-org/avala` | Learning verification platform |
 

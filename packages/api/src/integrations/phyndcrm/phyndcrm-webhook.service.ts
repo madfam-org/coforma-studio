@@ -1,11 +1,11 @@
 /**
- * PhyneCRM inbound webhook handler.
+ * PhyndCRM inbound webhook handler.
  *
  * Receives `contact.created`, `contact.updated`, `contact.deleted`, and
- * `engagement.status_changed` events from PhyneCRM. The handler is
+ * `engagement.status_changed` events from PhyndCRM. The handler is
  * intentionally **operator-promotion-driven**: it does NOT auto-create
- * `CABMembership` rows. Instead it backfills `phynecrmContactId` /
- * `phynecrmEngagementId` on existing memberships (matched by email)
+ * `CABMembership` rows. Instead it backfills `phyndcrmContactId` /
+ * `phyndcrmEngagementId` on existing memberships (matched by email)
  * and otherwise just records the event for operator review.
  *
  * Why no auto-create: the a16z framework audit (PR #52) calls out that
@@ -20,7 +20,7 @@ import * as crypto from 'crypto';
 import { LoggerService } from '../../lib/logger/logger.service';
 import { PrismaService } from '../../lib/prisma/prisma.service';
 
-// Header name matches the convention used by phyne-crm's
+// Header name matches the convention used by phynd-crm's
 // `validateMadfamSignature` helper and the cotiza/RouteCraft emitters
 // — see the @Headers('x-madfam-signature') decorator in the controller.
 const SIGNATURE_VERSION = 'v1';
@@ -69,7 +69,7 @@ export class PhyneCrmWebhookService {
   /**
    * Verify a `madfam-signature: t=<unix>,v1=<hex>` header.
    *
-   * Pattern mirrors RouteCraft / cotiza / phyne-crm: 5-min replay
+   * Pattern mirrors RouteCraft / cotiza / phynd-crm: 5-min replay
    * window + timing-safe HMAC compare.
    */
   verifySignature(rawBody: string, headerValue: string | undefined): SignatureVerificationResult {
@@ -122,7 +122,7 @@ export class PhyneCrmWebhookService {
    * Dispatch a verified event to the appropriate handler. Each handler
    * is best-effort — failures are logged and surfaced via the
    * `processed: false` return value, but the route still returns 200
-   * so PhyneCRM doesn't retry pathologically.
+   * so PhyndCRM doesn't retry pathologically.
    */
   async handleEvent(event: PhyneCrmEvent): Promise<{ processed: boolean; note?: string }> {
     switch (event.type) {
@@ -136,7 +136,7 @@ export class PhyneCrmWebhookService {
       default: {
         const exhaustive: never = event;
         this.logger.warn(
-          `Unknown PhyneCRM event type: ${(exhaustive as { type?: string }).type ?? 'undefined'}`,
+          `Unknown PhyndCRM event type: ${(exhaustive as { type?: string }).type ?? 'undefined'}`,
           this.context,
         );
         return { processed: false, note: 'unknown_event_type' };
@@ -156,7 +156,7 @@ export class PhyneCrmWebhookService {
       where: {
         user: { email: contact.email },
       },
-      select: { id: true, phynecrmContactId: true },
+      select: { id: true, phyndcrmContactId: true },
     });
 
     if (!membership) {
@@ -164,22 +164,22 @@ export class PhyneCrmWebhookService {
       // followup can write to a dedicated `cab_candidates` table; for
       // v1 this is operator-driven via logs + dashboard query.
       this.logger.log(
-        `PhyneCRM contact ${contact.id} (${contact.email}) observed; no matching CAB membership`,
+        `PhyndCRM contact ${contact.id} (${contact.email}) observed; no matching CAB membership`,
         this.context,
       );
       return { processed: true, note: 'candidate_observed' };
     }
 
-    if (membership.phynecrmContactId === contact.id) {
+    if (membership.phyndcrmContactId === contact.id) {
       return { processed: true, note: 'already_linked' };
     }
 
     await this.prisma.cABMembership.update({
       where: { id: membership.id },
-      data: { phynecrmContactId: contact.id },
+      data: { phyndcrmContactId: contact.id },
     });
     this.logger.log(
-      `Linked PhyneCRM contact ${contact.id} to CABMembership ${membership.id}`,
+      `Linked PhyndCRM contact ${contact.id} to CABMembership ${membership.id}`,
       this.context,
     );
     return { processed: true, note: 'linked' };
@@ -191,8 +191,8 @@ export class PhyneCrmWebhookService {
     // Soft-detach: clear the link but don't remove the membership. The
     // operator decides whether to also remove the member from the CAB.
     const result = await this.prisma.cABMembership.updateMany({
-      where: { phynecrmContactId: contactId },
-      data: { phynecrmContactId: null, phynecrmEngagementId: null },
+      where: { phyndcrmContactId: contactId },
+      data: { phyndcrmContactId: null, phyndcrmEngagementId: null },
     });
     return { processed: true, note: `unlinked_${result.count}` };
   }
@@ -201,8 +201,8 @@ export class PhyneCrmWebhookService {
     engagement: PhyneCrmEngagementStatus,
   ): Promise<{ processed: boolean; note?: string }> {
     const result = await this.prisma.cABMembership.updateMany({
-      where: { phynecrmContactId: engagement.contactId },
-      data: { phynecrmEngagementId: engagement.engagementId },
+      where: { phyndcrmContactId: engagement.contactId },
+      data: { phyndcrmEngagementId: engagement.engagementId },
     });
     if (result.count === 0) {
       return { processed: true, note: 'no_membership_to_link' };

@@ -1,9 +1,9 @@
 /**
- * Coforma → PhyneCRM outbound webhook emitter.
+ * Coforma → PhyndCRM outbound webhook emitter.
  *
- * Fires signed webhook events to PhyneCRM when CAB membership lifecycle
+ * Fires signed webhook events to PhyndCRM when CAB membership lifecycle
  * or feedback events happen in Coforma. Mirrors the inbound shape so
- * PhyneCRM can verify with the same `madfam-signature: t=<unix>,v1=<hex>`
+ * PhyndCRM can verify with the same `madfam-signature: t=<unix>,v1=<hex>`
  * convention.
  *
  * Fire-and-forget by design: any failure is logged but never throws into
@@ -21,7 +21,7 @@ import * as crypto from 'crypto';
 
 import { LoggerService } from '../../lib/logger/logger.service';
 
-// Header name matches the convention used by phyne-crm's
+// Header name matches the convention used by phynd-crm's
 // `validateMadfamSignature` helper and the cotiza/RouteCraft emitters,
 // so receivers can use one shared verifier.
 const SIGNATURE_HEADER = 'x-madfam-signature';
@@ -50,8 +50,8 @@ export interface MemberJoinedPayload {
   userName: string | null;
   company: string | null;
   title: string | null;
-  /** Set when the member came from PhyneCRM in the first place. */
-  phynecrmContactId: string | null;
+  /** Set when the member came from PhyndCRM in the first place. */
+  phyndcrmContactId: string | null;
 }
 
 export interface MemberExitedPayload {
@@ -59,8 +59,8 @@ export interface MemberExitedPayload {
   cabId: string;
   exitedAt: string; // ISO 8601
   exitNote: string | null;
-  /** When set, PhyneCRM should update the linked contact's lifecycle. */
-  phynecrmContactId: string | null;
+  /** When set, PhyndCRM should update the linked contact's lifecycle. */
+  phyndcrmContactId: string | null;
 }
 
 export interface FeedbackCreatedPayload {
@@ -71,7 +71,7 @@ export interface FeedbackCreatedPayload {
   title: string;
   body: string;
   priority: string | null;
-  phynecrmContactId: string | null;
+  phyndcrmContactId: string | null;
 }
 
 export interface RelayResult {
@@ -98,10 +98,10 @@ export class PhyneCrmRelayService {
     this.enabled = !!this.webhookUrl && !!this.webhookSecret;
 
     if (this.enabled) {
-      this.logger.log(`PhyneCRM relay initialized -> ${this.webhookUrl}`, this.context);
+      this.logger.log(`PhyndCRM relay initialized -> ${this.webhookUrl}`, this.context);
     } else {
       this.logger.warn(
-        'PhyneCRM relay disabled: PHYNECRM_OUTBOUND_URL or PHYNECRM_OUTBOUND_SECRET not set',
+        'PhyndCRM relay disabled: PHYNECRM_OUTBOUND_URL or PHYNECRM_OUTBOUND_SECRET not set',
         this.context,
       );
     }
@@ -116,8 +116,8 @@ export class PhyneCrmRelayService {
    * NEVER throws — callers should not need a try/catch.
    *
    * @param tenantId  The Coforma tenant the event belongs to. Sent as
-   *                  `x-coforma-tenant-id` so PhyneCRM can resolve to its
-   *                  own tenant via the Tenant.phynecrmTenantId mapping.
+   *                  `x-coforma-tenant-id` so PhyndCRM can resolve to its
+   *                  own tenant via the Tenant.phyndcrmTenantId mapping.
    */
   async emit(tenantId: string, event: CoformaOutboundEvent): Promise<RelayResult> {
     if (!this.enabled) {
@@ -150,7 +150,7 @@ export class PhyneCrmRelayService {
         });
         if (!response.ok) {
           this.logger.warn(
-            `PhyneCRM relay non-2xx for ${event.type}: ${response.status}`,
+            `PhyndCRM relay non-2xx for ${event.type}: ${response.status}`,
             this.context,
           );
           return { ok: false, status: response.status, reason: 'http_error' };
@@ -162,7 +162,7 @@ export class PhyneCrmRelayService {
     } catch (err) {
       // Includes AbortError on timeout.
       this.logger.error(
-        `PhyneCRM relay failed for ${event.type}: ${(err as Error).message}`,
+        `PhyndCRM relay failed for ${event.type}: ${(err as Error).message}`,
         this.context,
       );
       return { ok: false, reason: 'fetch_error' };
@@ -191,7 +191,7 @@ export class PhyneCrmRelayService {
 
   /**
    * Stable per-event idempotency key. Same event emitted twice (e.g. on
-   * a retry) must produce the same key so PhyneCRM can dedup.
+   * a retry) must produce the same key so PhyndCRM can dedup.
    */
   private idempotencyKeyFor(event: CoformaOutboundEvent): string {
     switch (event.type) {

@@ -17,7 +17,7 @@ const { prismaStub } = vi.hoisted(() => ({
 vi.mock('@/lib/auth-helpers', () => ({
   requireSession: vi.fn(),
 }));
-vi.mock('@/lib/phynecrm-relay', () => ({
+vi.mock('@/lib/phyndcrm-relay', () => ({
   emitFeedbackCreated: vi.fn(),
 }));
 vi.mock('@prisma/client', () => {
@@ -36,7 +36,7 @@ vi.mock('@prisma/client', () => {
 
 import { POST } from '../route';
 import { requireSession } from '@/lib/auth-helpers';
-import { emitFeedbackCreated } from '@/lib/phynecrm-relay';
+import { emitFeedbackCreated } from '@/lib/phyndcrm-relay';
 
 const requireSessionMock = requireSession as unknown as ReturnType<typeof vi.fn>;
 const emitFeedbackCreatedMock = emitFeedbackCreated as unknown as ReturnType<typeof vi.fn>;
@@ -119,7 +119,7 @@ describe('POST /api/v1/cabs/[id]/feedback', () => {
     prisma.session.findUnique.mockResolvedValue({ cabId: CAB_ID });
     prisma.feedbackItem.create.mockResolvedValue({ id: 'fb-1' });
     prisma.user.findUnique.mockResolvedValue({ email: 'admin@x.com' });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: 'madfam' });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: 'madfam' });
     prisma.feedbackItem.findUnique.mockResolvedValue({ id: 'fb-1', title: 'Loved the new export feature' });
 
     const res = await POST(makeRequest(validBody), PARAMS);
@@ -151,7 +151,7 @@ describe('POST /api/v1/cabs/[id]/feedback', () => {
     }));
   });
 
-  it('happy path (CAB member, not tenant admin): 201 + relay fired with member phynecrmContactId', async () => {
+  it('happy path (CAB member, not tenant admin): 201 + relay fired with member phyndcrmContactId', async () => {
     const prisma = getPrismaInstance();
     prisma.cAB.findUnique.mockResolvedValue({ id: CAB_ID, tenantId: TENANT_ID, slug: 'tezca' });
     requireSessionMock.mockResolvedValue({
@@ -169,20 +169,20 @@ describe('POST /api/v1/cabs/[id]/feedback', () => {
     prisma.cABMembership.findFirst.mockImplementation(({ where }: { where: Record<string, unknown> }) => {
       // First call: membership lookup for auth (exitedAt: null)
       if ('exitedAt' in where) return Promise.resolve({ id: 'mem-7' });
-      // Second call: phynecrmContactId lookup
-      return Promise.resolve({ phynecrmContactId: 'crm-c-77' });
+      // Second call: phyndcrmContactId lookup
+      return Promise.resolve({ phyndcrmContactId: 'crm-c-77' });
     });
     prisma.session.findUnique.mockResolvedValue({ cabId: CAB_ID });
     prisma.feedbackItem.create.mockResolvedValue({ id: 'fb-2' });
     prisma.user.findUnique.mockResolvedValue({ email: 'member@x.com' });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: 'madfam' });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: 'madfam' });
     prisma.feedbackItem.findUnique.mockResolvedValue({ id: 'fb-2' });
 
     const res = await POST(makeRequest(validBody), PARAMS);
     expect(res.status).toBe(201);
     expect(emitFeedbackCreatedMock).toHaveBeenCalledWith(
       'madfam',
-      expect.objectContaining({ phynecrmContactId: 'crm-c-77' }),
+      expect.objectContaining({ phyndcrmContactId: 'crm-c-77' }),
     );
   });
 
@@ -243,7 +243,7 @@ describe('POST /api/v1/cabs/[id]/feedback', () => {
     prisma.session.findUnique.mockResolvedValue({ cabId: CAB_ID });
     prisma.feedbackItem.create.mockResolvedValue({ id: 'fb-3' });
     prisma.user.findUnique.mockResolvedValue({ email: 'admin@x.com' });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: null });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: null });
     prisma.feedbackItem.findUnique.mockResolvedValue({ id: 'fb-3' });
     const warnSpy = vi.spyOn(console, 'warn');
 

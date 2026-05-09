@@ -1,7 +1,7 @@
 /**
- * PhyneCRM inbound webhook (Next.js port).
+ * PhyndCRM inbound webhook (Next.js port).
  *
- * Mirrors the NestJS implementation in packages/api/src/integrations/phynecrm/
+ * Mirrors the NestJS implementation in packages/api/src/integrations/phyndcrm/
  * for parity, but lives here because production only deploys @coforma/web.
  * The NestJS version stays as the canonical reference + tested implementation;
  * the logic here is intentionally minimal and reuses the same payload shapes.
@@ -117,7 +117,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         }
         const membership = await prisma.cABMembership.findFirst({
           where: { user: { email: data.email } },
-          select: { id: true, phynecrmContactId: true },
+          select: { id: true, phyndcrmContactId: true },
         });
         if (!membership) {
           return NextResponse.json(
@@ -125,7 +125,7 @@ export async function POST(req: Request): Promise<NextResponse> {
             { status: 200 },
           );
         }
-        if (membership.phynecrmContactId === data.id) {
+        if (membership.phyndcrmContactId === data.id) {
           return NextResponse.json(
             { received: true, processed: true, note: 'already_linked' },
             { status: 200 },
@@ -133,7 +133,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         }
         await prisma.cABMembership.update({
           where: { id: membership.id },
-          data: { phynecrmContactId: data.id },
+          data: { phyndcrmContactId: data.id },
         });
         return NextResponse.json(
           { received: true, processed: true, note: 'linked' },
@@ -142,8 +142,8 @@ export async function POST(req: Request): Promise<NextResponse> {
       }
       case 'contact.deleted': {
         const result = await prisma.cABMembership.updateMany({
-          where: { phynecrmContactId: event.data.id },
-          data: { phynecrmContactId: null, phynecrmEngagementId: null },
+          where: { phyndcrmContactId: event.data.id },
+          data: { phyndcrmContactId: null, phyndcrmEngagementId: null },
         });
         return NextResponse.json(
           { received: true, processed: true, note: `unlinked_${result.count}` },
@@ -152,8 +152,8 @@ export async function POST(req: Request): Promise<NextResponse> {
       }
       case 'engagement.status_changed': {
         const result = await prisma.cABMembership.updateMany({
-          where: { phynecrmContactId: event.data.contactId },
-          data: { phynecrmEngagementId: event.data.engagementId },
+          where: { phyndcrmContactId: event.data.contactId },
+          data: { phyndcrmEngagementId: event.data.engagementId },
         });
         if (result.count === 0) {
           return NextResponse.json(
@@ -174,7 +174,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     }
   } catch (err) {
     // Verified payload; never retry-storm. Log + return 200.
-    console.error('phynecrm webhook handler error', err);
+    console.error('phyndcrm webhook handler error', err);
     return NextResponse.json(
       { received: true, processed: false, note: 'handler_error' },
       { status: 200 },

@@ -1,16 +1,16 @@
 /**
- * Coforma → PhyneCRM outbound webhook emitter (Next.js port).
+ * Coforma → PhyndCRM outbound webhook emitter (Next.js port).
  *
  * Mirrors the NestJS implementation in
- *   packages/api/src/integrations/phynecrm/phynecrm-relay.service.ts
+ *   packages/api/src/integrations/phyndcrm/phyndcrm-relay.service.ts
  *
  * The NestJS app does NOT deploy in production (no Kustomization in
  * infra/k8s/production/kustomization.yaml + unresolved deps), so any
- * lifecycle event that should reach PhyneCRM has to be emitted from the
+ * lifecycle event that should reach PhyndCRM has to be emitted from the
  * Next.js side. The inbound webhook was ported in PR #60; this is the
  * matching outbound half.
  *
- * Wire format MUST be byte-identical to the NestJS service so PhyneCRM's
+ * Wire format MUST be byte-identical to the NestJS service so PhyndCRM's
  * shared `validateMadfamSignature` helper accepts both, and so the
  * receiver-side dedupe (keyed off Idempotency-Key) treats retries from
  * either source as the same event:
@@ -18,7 +18,7 @@
  *   - Header  x-madfam-signature: t=<unix>,v1=<hex>
  *   - HMAC over `${ts}.${rawBody}` with PHYNECRM_OUTBOUND_SECRET
  *   - Header  idempotency-key: stable per (event-type, entity-id)
- *   - Header  x-coforma-tenant-id: PhyneCRM-side tenant id
+ *   - Header  x-coforma-tenant-id: PhyndCRM-side tenant id
  *
  * Fire-and-forget: never throws, returns a structured result for tests
  * + telemetry. Caller is expected to `void`-discard the promise (or
@@ -42,8 +42,8 @@ export interface MemberJoinedPayload {
   userName: string | null;
   company: string | null;
   title: string | null;
-  /** Set when the member came from PhyneCRM in the first place. */
-  phynecrmContactId: string | null;
+  /** Set when the member came from PhyndCRM in the first place. */
+  phyndcrmContactId: string | null;
 }
 
 export interface MemberExitedPayload {
@@ -51,8 +51,8 @@ export interface MemberExitedPayload {
   cabId: string;
   exitedAt: string; // ISO 8601
   exitNote: string | null;
-  /** When set, PhyneCRM should update the linked contact's lifecycle. */
-  phynecrmContactId: string | null;
+  /** When set, PhyndCRM should update the linked contact's lifecycle. */
+  phyndcrmContactId: string | null;
 }
 
 export interface FeedbackCreatedPayload {
@@ -63,7 +63,7 @@ export interface FeedbackCreatedPayload {
   title: string;
   body: string;
   priority: string | null;
-  phynecrmContactId: string | null;
+  phyndcrmContactId: string | null;
 }
 
 export type CoformaOutboundEvent =
@@ -123,7 +123,7 @@ function sign(secret: string, timestamp: number, body: string): string {
 /**
  * Stable per-event idempotency key. Same event emitted twice (e.g. on
  * a retry, or dual-fire from both NestJS and Next.js sides during a
- * migration) MUST produce the same key so PhyneCRM's receiver dedupes.
+ * migration) MUST produce the same key so PhyndCRM's receiver dedupes.
  *
  * Keep these strings byte-identical to the NestJS implementation —
  * changing the format silently breaks dedupe across deploys.
@@ -145,8 +145,8 @@ export function idempotencyKeyFor(event: CoformaOutboundEvent): string {
  * Fire-and-forget emit. Never throws. Returns the result for tests +
  * telemetry; callers in API routes should `void`-discard.
  *
- * @param tenantId  Coforma tenant resolved to its PhyneCRM-side
- *                  counterpart (Tenant.phynecrmTenantId on the
+ * @param tenantId  Coforma tenant resolved to its PhyndCRM-side
+ *                  counterpart (Tenant.phyndcrmTenantId on the
  *                  Coforma schema). Sent as `x-coforma-tenant-id`.
  *                  Empty string is rejected with `missing_tenant`
  *                  before any network I/O.
@@ -155,7 +155,7 @@ export function idempotencyKeyFor(event: CoformaOutboundEvent): string {
  *                  production, omit and let `getRelayConfig()` read
  *                  from process.env.
  */
-export async function phynecrmRelay(
+export async function phyndcrmRelay(
   tenantId: string,
   event: CoformaOutboundEvent,
   overrides?: Partial<RelayConfig>,
@@ -215,7 +215,7 @@ export function emitMemberJoined(
   payload: MemberJoinedPayload,
   overrides?: Partial<RelayConfig>,
 ): Promise<RelayResult> {
-  return phynecrmRelay(tenantId, { type: 'cab.member.joined', data: payload }, overrides);
+  return phyndcrmRelay(tenantId, { type: 'cab.member.joined', data: payload }, overrides);
 }
 
 export function emitMemberExited(
@@ -223,7 +223,7 @@ export function emitMemberExited(
   payload: MemberExitedPayload,
   overrides?: Partial<RelayConfig>,
 ): Promise<RelayResult> {
-  return phynecrmRelay(tenantId, { type: 'cab.member.exited', data: payload }, overrides);
+  return phyndcrmRelay(tenantId, { type: 'cab.member.exited', data: payload }, overrides);
 }
 
 export function emitFeedbackCreated(
@@ -231,5 +231,5 @@ export function emitFeedbackCreated(
   payload: FeedbackCreatedPayload,
   overrides?: Partial<RelayConfig>,
 ): Promise<RelayResult> {
-  return phynecrmRelay(tenantId, { type: 'cab.feedback.created', data: payload }, overrides);
+  return phyndcrmRelay(tenantId, { type: 'cab.feedback.created', data: payload }, overrides);
 }

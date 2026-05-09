@@ -2,7 +2,7 @@
  * POST /api/v1/cabs/[id]/feedback
  *
  * Records feedback in a CAB session. Persists a `FeedbackItem` row in
- * Coforma DB and fires `cab.feedback.created` to PhyneCRM fire-and-forget.
+ * Coforma DB and fires `cab.feedback.created` to PhyndCRM fire-and-forget.
  *
  * Auth: Janua JWT via `getSession()` → must be a CAB member (any
  *       CABMembership for this CAB tied to the session user) OR ADMIN
@@ -26,7 +26,7 @@ import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 
 import { requireSession, type RequireAuthResult } from '@/lib/auth-helpers';
-import { emitFeedbackCreated } from '@/lib/phynecrm-relay';
+import { emitFeedbackCreated } from '@/lib/phyndcrm-relay';
 
 const prisma = new PrismaClient();
 
@@ -128,7 +128,7 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
 
   let feedbackId: string;
   let userEmail: string;
-  let phynecrmContactId: string | null = null;
+  let phyndcrmContactId: string | null = null;
   try {
     const feedback = await prisma.feedbackItem.create({
       data: {
@@ -144,7 +144,7 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
     });
     feedbackId = feedback.id;
 
-    // Pull author email + (optional) PhyneCRM contact id for the relay
+    // Pull author email + (optional) PhyndCRM contact id for the relay
     // payload. Single round-trip; OK to do post-write since the relay
     // is fire-and-forget.
     const author = await prisma.user.findUnique({
@@ -156,9 +156,9 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
     if (isCabMember) {
       const memberLink = await prisma.cABMembership.findFirst({
         where: { cabId: cab.id, userId },
-        select: { phynecrmContactId: true },
+        select: { phyndcrmContactId: true },
       });
-      phynecrmContactId = memberLink?.phynecrmContactId ?? null;
+      phyndcrmContactId = memberLink?.phyndcrmContactId ?? null;
     }
   } catch (err) {
     const code = prismaErrorCode(err);
@@ -173,16 +173,16 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
   // Fire-and-forget relay.
   const tenant = await prisma.tenant.findUnique({
     where: { id: cab.tenantId },
-    select: { phynecrmTenantId: true },
+    select: { phyndcrmTenantId: true },
   });
 
-  if (!tenant?.phynecrmTenantId) {
+  if (!tenant?.phyndcrmTenantId) {
     console.warn('cab.feedback.create: tenant not federated, skipping relay', {
       cabId,
       tenantId: cab.tenantId,
     });
   } else {
-    void emitFeedbackCreated(tenant.phynecrmTenantId, {
+    void emitFeedbackCreated(tenant.phyndcrmTenantId, {
       feedbackId,
       cabId: cab.id,
       authorEmail: userEmail,
@@ -190,7 +190,7 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
       title: body.summary,
       body: body.body,
       priority: null,
-      phynecrmContactId,
+      phyndcrmContactId,
     });
   }
 

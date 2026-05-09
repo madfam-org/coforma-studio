@@ -13,7 +13,7 @@ const { prismaStub } = vi.hoisted(() => ({
 vi.mock('@/lib/auth-helpers', () => ({
   requireTenantRole: vi.fn(),
 }));
-vi.mock('@/lib/phynecrm-relay', () => ({
+vi.mock('@/lib/phyndcrm-relay', () => ({
   emitMemberExited: vi.fn(),
 }));
 vi.mock('@prisma/client', () => {
@@ -38,7 +38,7 @@ vi.mock('@prisma/client', () => {
 
 import { DELETE } from '../route';
 import { requireTenantRole } from '@/lib/auth-helpers';
-import { emitMemberExited } from '@/lib/phynecrm-relay';
+import { emitMemberExited } from '@/lib/phyndcrm-relay';
 
 const requireTenantRoleMock = requireTenantRole as unknown as ReturnType<typeof vi.fn>;
 const emitMemberExitedMock = emitMemberExited as unknown as ReturnType<typeof vi.fn>;
@@ -81,7 +81,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: 'crm-c-9',
+      phyndcrmContactId: 'crm-c-9',
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({
@@ -90,7 +90,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     });
     const updatedRow = { id: MEM_ID, cabId: CAB_ID, exitStatus: 'CHURNED', exitedAt: new Date() };
     prisma.cABMembership.update.mockResolvedValue(updatedRow);
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: 'madfam' });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: 'madfam' });
     emitMemberExitedMock.mockResolvedValue({ ok: true });
 
     const res = await DELETE(makeRequest({ exitStatus: 'CHURNED', reason: 'no fit' }), PARAMS);
@@ -110,7 +110,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
       membershipId: MEM_ID,
       cabId: CAB_ID,
       exitNote: 'no fit',
-      phynecrmContactId: 'crm-c-9',
+      phyndcrmContactId: 'crm-c-9',
     });
     expect(callArgs[1].exitedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
@@ -120,7 +120,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({
@@ -128,7 +128,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
       session: { user: { id: 'u1', email: 'admin@x.com', name: null, image: null, tenants: [] } },
     });
     prisma.cABMembership.update.mockResolvedValue({ id: MEM_ID });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: 'madfam' });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: 'madfam' });
 
     const res = await DELETE(makeRequest(), PARAMS);
     expect(res.status).toBe(200);
@@ -144,7 +144,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({ ok: false, status: 401, reason: 'unauthenticated' });
@@ -159,7 +159,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({ ok: false, status: 403, reason: 'insufficient_role' });
@@ -174,7 +174,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({
@@ -202,7 +202,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({
@@ -210,7 +210,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
       session: { user: { id: 'u1', email: 'a@a.com', name: null, image: null, tenants: [] } },
     });
     prisma.cABMembership.update.mockResolvedValue({ id: MEM_ID });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: null });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: null });
     const warnSpy = vi.spyOn(console, 'warn');
 
     const res = await DELETE(makeRequest({ exitStatus: 'CHURNED' }), PARAMS);
@@ -224,7 +224,7 @@ describe('DELETE /api/v1/memberships/[id]', () => {
     prisma.cABMembership.findUnique.mockResolvedValue({
       id: MEM_ID,
       cabId: CAB_ID,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
       cab: { tenantId: TENANT_ID },
     });
     requireTenantRoleMock.mockResolvedValue({

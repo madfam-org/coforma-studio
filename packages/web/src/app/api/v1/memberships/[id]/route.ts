@@ -14,7 +14,7 @@
  * from caller.
  *
  * Relay: fired fire-and-forget after a successful DB update. Tenant
- *        without `phynecrmTenantId` → warn + skip.
+ *        without `phyndcrmTenantId` → warn + skip.
  */
 
 import { NextResponse } from 'next/server';
@@ -22,7 +22,7 @@ import { PrismaClient, MembershipExitStatus } from '@prisma/client';
 import { z } from 'zod';
 
 import { requireTenantRole } from '@/lib/auth-helpers';
-import { emitMemberExited } from '@/lib/phynecrm-relay';
+import { emitMemberExited } from '@/lib/phyndcrm-relay';
 
 const prisma = new PrismaClient();
 
@@ -60,7 +60,7 @@ export async function DELETE(req: Request, { params }: RouteParams): Promise<Nex
     select: {
       id: true,
       cabId: true,
-      phynecrmContactId: true,
+      phyndcrmContactId: true,
       cab: { select: { tenantId: true } },
     },
   });
@@ -124,21 +124,21 @@ export async function DELETE(req: Request, { params }: RouteParams): Promise<Nex
   // Fire relay fire-and-forget.
   const tenant = await prisma.tenant.findUnique({
     where: { id: existing.cab.tenantId },
-    select: { phynecrmTenantId: true },
+    select: { phyndcrmTenantId: true },
   });
 
-  if (!tenant?.phynecrmTenantId) {
+  if (!tenant?.phyndcrmTenantId) {
     console.warn('memberships.exit: tenant not federated, skipping relay', {
       membershipId,
       tenantId: existing.cab.tenantId,
     });
   } else {
-    void emitMemberExited(tenant.phynecrmTenantId, {
+    void emitMemberExited(tenant.phyndcrmTenantId, {
       membershipId: updated.id,
       cabId: existing.cabId,
       exitedAt: exitedAt.toISOString(),
       exitNote: body.reason ?? null,
-      phynecrmContactId: existing.phynecrmContactId,
+      phyndcrmContactId: existing.phyndcrmContactId,
     });
   }
 

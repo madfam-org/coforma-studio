@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
-import { PhyneCrmRelayService } from '../../integrations/phynecrm/phynecrm-relay.service';
+import { PhyneCrmRelayService } from '../../integrations/phyndcrm/phyndcrm-relay.service';
 import { PrismaService } from '../../lib/prisma/prisma.service';
 import { LoggerService } from '../../lib/logger/logger.service';
 import {
@@ -29,26 +29,26 @@ export class CABMemberService {
   ) {}
 
   /**
-   * Fire-and-forget PhyneCRM emit. Wraps in try/catch as a belt-and-
+   * Fire-and-forget PhyndCRM emit. Wraps in try/catch as a belt-and-
    * suspenders even though the relay itself never throws. Uses the
-   * tenant's `phynecrmTenantId` mapping; skips if unset.
+   * tenant's `phyndcrmTenantId` mapping; skips if unset.
    */
   private async emitToPhynecrm(
     tenantId: string,
-    fire: (phynecrmTenantId: string) => Promise<unknown>,
+    fire: (phyndcrmTenantId: string) => Promise<unknown>,
   ): Promise<void> {
     try {
       const tenant = await this.prisma.tenant.findUnique({
         where: { id: tenantId },
-        select: { phynecrmTenantId: true },
+        select: { phyndcrmTenantId: true },
       });
-      if (!tenant?.phynecrmTenantId) {
-        return; // Tenant not federated to PhyneCRM yet; silent skip.
+      if (!tenant?.phyndcrmTenantId) {
+        return; // Tenant not federated to PhyndCRM yet; silent skip.
       }
-      await fire(tenant.phynecrmTenantId);
+      await fire(tenant.phyndcrmTenantId);
     } catch (err) {
       this.logger.warn(
-        `PhyneCRM relay emit failed (non-fatal): ${(err as Error).message}`,
+        `PhyndCRM relay emit failed (non-fatal): ${(err as Error).message}`,
         'CABMemberService',
       );
     }
@@ -137,9 +137,9 @@ export class CABMemberService {
 
       this.logger.log(`Member added successfully: ${member.id}`, 'CABMemberService');
 
-      // Fan out to PhyneCRM (best-effort; never throws into this path).
-      void this.emitToPhynecrm(tenantId, (phynecrmTenantId) =>
-        this.phyneCrmRelay.emitMemberJoined(phynecrmTenantId, {
+      // Fan out to PhyndCRM (best-effort; never throws into this path).
+      void this.emitToPhynecrm(tenantId, (phyndcrmTenantId) =>
+        this.phyneCrmRelay.emitMemberJoined(phyndcrmTenantId, {
           membershipId: member.id,
           cabId: cab.id,
           cabSlug: cab.slug,
@@ -147,7 +147,7 @@ export class CABMemberService {
           userName: member.user.name,
           company: member.company,
           title: member.title,
-          phynecrmContactId: null,
+          phyndcrmContactId: null,
         }),
       );
 

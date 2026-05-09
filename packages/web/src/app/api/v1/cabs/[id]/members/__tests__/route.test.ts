@@ -26,7 +26,7 @@ const { prismaStub } = vi.hoisted(() => ({
 vi.mock('@/lib/auth-helpers', () => ({
   requireTenantRole: vi.fn(),
 }));
-vi.mock('@/lib/phynecrm-relay', () => ({
+vi.mock('@/lib/phyndcrm-relay', () => ({
   emitMemberJoined: vi.fn(),
 }));
 
@@ -47,7 +47,7 @@ vi.mock('@prisma/client', () => {
 
 import { POST } from '../route';
 import { requireTenantRole } from '@/lib/auth-helpers';
-import { emitMemberJoined } from '@/lib/phynecrm-relay';
+import { emitMemberJoined } from '@/lib/phyndcrm-relay';
 
 const requireTenantRoleMock = requireTenantRole as unknown as ReturnType<typeof vi.fn>;
 const emitMemberJoinedMock = emitMemberJoined as unknown as ReturnType<typeof vi.fn>;
@@ -95,7 +95,7 @@ describe('POST /api/v1/cabs/[id]/members', () => {
     });
     prisma.user.upsert.mockResolvedValue({ id: 'user-9', email: 'a@b.com', name: 'A B' });
     prisma.cABMembership.create.mockResolvedValue({ id: 'mem-1' });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: 'madfam' });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: 'madfam' });
     prisma.cABMembership.findUnique.mockResolvedValue({ id: 'mem-1', cabId: CAB_ID });
     emitMemberJoinedMock.mockResolvedValue({ ok: true, status: 200 });
 
@@ -116,7 +116,7 @@ describe('POST /api/v1/cabs/[id]/members', () => {
       userName: 'A B',
       company: 'Acme',
       title: 'CTO',
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
     });
   });
 
@@ -165,7 +165,7 @@ describe('POST /api/v1/cabs/[id]/members', () => {
     });
     prisma.user.upsert.mockResolvedValue({ id: 'user-9', email: 'a@b.com', name: null });
     prisma.cABMembership.create.mockResolvedValue({ id: 'mem-2' });
-    prisma.tenant.findUnique.mockResolvedValue({ phynecrmTenantId: null });
+    prisma.tenant.findUnique.mockResolvedValue({ phyndcrmTenantId: null });
     prisma.cABMembership.findUnique.mockResolvedValue({ id: 'mem-2' });
     const warnSpy = vi.spyOn(console, 'warn');
 

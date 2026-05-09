@@ -1,5 +1,5 @@
 /**
- * Tests for PhyneCRM outbound relay.
+ * Tests for PhyndCRM outbound relay.
  *
  * Cover:
  * - Disabled when env not set (returns reason: disabled, no fetch)
@@ -15,7 +15,7 @@ import * as crypto from 'crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LoggerService } from '../../../lib/logger/logger.service';
-import { PhyneCrmRelayService, type MemberJoinedPayload } from '../phynecrm-relay.service';
+import { PhyneCrmRelayService, type MemberJoinedPayload } from '../phyndcrm-relay.service';
 
 const URL = 'https://crm.madfam.io/api/v1/webhooks/coforma';
 const SECRET = 'test-secret';
@@ -57,7 +57,7 @@ const PAYLOAD: MemberJoinedPayload = {
   userName: 'A B',
   company: 'Acme',
   title: 'CTO',
-  phynecrmContactId: null,
+  phyndcrmContactId: null,
 };
 
 describe('PhyneCrmRelayService', () => {
@@ -141,14 +141,14 @@ describe('PhyneCrmRelayService', () => {
       cabId: 'cab-1',
       exitedAt: '2026-04-01T00:00:00Z',
       exitNote: null,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
     });
     await service.emitMemberExited('tenant-1', {
       membershipId: 'mem-2',
       cabId: 'cab-1',
       exitedAt: '2026-04-15T00:00:00Z', // re-exit later
       exitNote: null,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
     });
     const calls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
     const k1 = (calls[0][1] as { headers: Record<string, string> }).headers['idempotency-key'];

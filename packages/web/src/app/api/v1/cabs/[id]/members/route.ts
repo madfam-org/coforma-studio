@@ -3,7 +3,7 @@
  *
  * Adds a member to a CAB. Replaces the dead `trpc.cabMembers.add` flow
  * (which routes through the un-deployed NestJS api). On success, fires
- * the PhyneCRM `cab.member.joined` relay fire-and-forget so the
+ * the PhyndCRM `cab.member.joined` relay fire-and-forget so the
  * federation half built in PR #61 actually exercises in production.
  *
  * Auth: Janua JWT via `getSession()` → must be ADMIN of the parent
@@ -15,8 +15,8 @@
  * Tenant resolution: derived from CAB.tenantId, never trusted from the
  * caller. Multi-tenant isolation is enforced here, not at the relay.
  *
- * Relay tenant id: looked up via Tenant.phynecrmTenantId. NULL means the
- * tenant isn't federated to PhyneCRM yet — log a warning and skip the
+ * Relay tenant id: looked up via Tenant.phyndcrmTenantId. NULL means the
+ * tenant isn't federated to PhyndCRM yet — log a warning and skip the
  * relay; never throw. The DB write still succeeds.
  */
 
@@ -25,7 +25,7 @@ import { PrismaClient, PersonaRole } from '@prisma/client';
 import { z } from 'zod';
 
 import { requireTenantRole } from '@/lib/auth-helpers';
-import { emitMemberJoined } from '@/lib/phynecrm-relay';
+import { emitMemberJoined } from '@/lib/phyndcrm-relay';
 
 const prisma = new PrismaClient();
 
@@ -148,20 +148,20 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
     return NextResponse.json({ error: 'db_error' }, { status: 500 });
   }
 
-  // Fire-and-forget PhyneCRM relay. Tenant must be federated for this
+  // Fire-and-forget PhyndCRM relay. Tenant must be federated for this
   // to do anything; otherwise log + skip. The relay itself never throws.
   const tenant = await prisma.tenant.findUnique({
     where: { id: cab.tenantId },
-    select: { phynecrmTenantId: true },
+    select: { phyndcrmTenantId: true },
   });
 
-  if (!tenant?.phynecrmTenantId) {
+  if (!tenant?.phyndcrmTenantId) {
     console.warn('cab.members.add: tenant not federated, skipping relay', {
       cabId,
       tenantId: cab.tenantId,
     });
   } else {
-    void emitMemberJoined(tenant.phynecrmTenantId, {
+    void emitMemberJoined(tenant.phyndcrmTenantId, {
       membershipId,
       cabId: cab.id,
       cabSlug: cab.slug,
@@ -169,7 +169,7 @@ export async function POST(req: Request, { params }: RouteParams): Promise<NextR
       userName,
       company: body.company ?? null,
       title: body.role ?? null,
-      phynecrmContactId: null,
+      phyndcrmContactId: null,
     });
   }
 

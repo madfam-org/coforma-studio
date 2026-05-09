@@ -1,8 +1,8 @@
 /**
- * Tests for the Next.js port of the PhyneCRM outbound relay.
+ * Tests for the Next.js port of the PhyndCRM outbound relay.
  *
- * Parity contract with packages/api/src/integrations/phynecrm/__tests__/
- * phynecrm-relay.service.spec.ts:
+ * Parity contract with packages/api/src/integrations/phyndcrm/__tests__/
+ * phyndcrm-relay.service.spec.ts:
  *   - Disabled when env not set (no fetch)
  *   - Missing tenant rejected before fetch
  *   - Signature header has the t=…,v1=… shape and is HMAC-SHA256-byte-
@@ -20,9 +20,9 @@ import {
   emitMemberExited,
   emitMemberJoined,
   idempotencyKeyFor,
-  phynecrmRelay,
+  phyndcrmRelay,
   type MemberJoinedPayload,
-} from '../phynecrm-relay';
+} from '../phyndcrm-relay';
 
 const URL_OK = 'https://crm.madfam.io/api/v1/webhooks/coforma';
 const SECRET = 'test-secret';
@@ -35,7 +35,7 @@ const PAYLOAD: MemberJoinedPayload = {
   userName: 'A B',
   company: 'Acme',
   title: 'CTO',
-  phynecrmContactId: null,
+  phyndcrmContactId: null,
 };
 
 type FetchMock = ReturnType<typeof vi.fn>;
@@ -52,7 +52,7 @@ function getCall(calls: unknown[][], idx: number): unknown[] {
   return c;
 }
 
-describe('phynecrmRelay', () => {
+describe('phyndcrmRelay', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn());
   });
@@ -150,7 +150,7 @@ describe('phynecrmRelay', () => {
         cabId: 'cab-1',
         exitedAt: '2026-04-01T00:00:00Z',
         exitNote: null,
-        phynecrmContactId: null,
+        phyndcrmContactId: null,
       },
       { url: URL_OK, secret: SECRET },
     );
@@ -161,7 +161,7 @@ describe('phynecrmRelay', () => {
         cabId: 'cab-1',
         exitedAt: '2026-04-15T00:00:00Z',
         exitNote: null,
-        phynecrmContactId: null,
+        phyndcrmContactId: null,
       },
       { url: URL_OK, secret: SECRET },
     );
@@ -223,7 +223,7 @@ describe('phynecrmRelay', () => {
           cabId: 'cab-9',
           exitedAt: '2026-05-01T00:00:00Z',
           exitNote: null,
-          phynecrmContactId: null,
+          phyndcrmContactId: null,
         },
       }),
     ).toBe('coforma:cab.member.exited:mem-9:2026-05-01T00:00:00Z');
@@ -238,13 +238,13 @@ describe('phynecrmRelay', () => {
           title: 't',
           body: 'b',
           priority: null,
-          phynecrmContactId: null,
+          phyndcrmContactId: null,
         },
       }),
     ).toBe('coforma:cab.feedback.created:fb-3');
   });
 
-  it('phynecrmRelay reads config from process.env when no overrides given', async () => {
+  it('phyndcrmRelay reads config from process.env when no overrides given', async () => {
     const prevUrl = process.env.PHYNECRM_OUTBOUND_URL;
     const prevSecret = process.env.PHYNECRM_OUTBOUND_SECRET;
     process.env.PHYNECRM_OUTBOUND_URL = URL_OK;
@@ -253,7 +253,7 @@ describe('phynecrmRelay', () => {
       (globalThis.fetch as FetchMock).mockResolvedValueOnce(
         new Response(null, { status: 200 }),
       );
-      const result = await phynecrmRelay('tenant-7', {
+      const result = await phyndcrmRelay('tenant-7', {
         type: 'cab.member.joined',
         data: PAYLOAD,
       });

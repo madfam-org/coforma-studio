@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { PhyneCrmModule } from '../../integrations/phynecrm/phynecrm.module';
+import { PhyneCrmModule } from '../../integrations/phyndcrm/phyndcrm.module';
 import { CABMemberService } from './cab-member.service';
 
 @Module({
