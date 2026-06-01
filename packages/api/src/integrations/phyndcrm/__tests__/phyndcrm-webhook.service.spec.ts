@@ -12,16 +12,16 @@ import { describe, expect, it } from 'vitest';
 
 import { LoggerService } from '../../../lib/logger/logger.service';
 import { PrismaService } from '../../../lib/prisma/prisma.service';
-import { PhyneCrmWebhookService } from '../phyndcrm-webhook.service';
+import { PhyndCrmWebhookService } from '../phyndcrm-webhook.service';
 
 const TEST_SECRET = 'test-secret-for-hmac-only-not-real-key';
 
 // `secret` is required so callers must explicitly pass undefined to
 // exercise the no-secret branch (avoids the default-parameter trap
 // where passing `undefined` falls back to the default).
-function makeService(secret: string | undefined): PhyneCrmWebhookService {
+function makeService(secret: string | undefined): PhyndCrmWebhookService {
   const config = {
-    get: (key: string) => (key === 'PHYNECRM_INBOUND_SECRET' ? secret : undefined),
+    get: (key: string) => (key === 'PHYNDCRM_INBOUND_SECRET' ? secret : undefined),
   } as unknown as ConfigService;
   const logger = {
     log: () => undefined,
@@ -31,7 +31,7 @@ function makeService(secret: string | undefined): PhyneCrmWebhookService {
     verbose: () => undefined,
   } as unknown as LoggerService;
   const prisma = {} as PrismaService; // signature tests don't touch DB
-  return new PhyneCrmWebhookService(config, logger, prisma);
+  return new PhyndCrmWebhookService(config, logger, prisma);
 }
 
 function signBody(body: string, secret: string, timestamp = Math.floor(Date.now() / 1000)): string {
@@ -39,7 +39,7 @@ function signBody(body: string, secret: string, timestamp = Math.floor(Date.now(
   return `t=${timestamp},v1=${sig}`;
 }
 
-describe('PhyneCrmWebhookService.verifySignature', () => {
+describe('PhyndCrmWebhookService.verifySignature', () => {
   const body = JSON.stringify({ type: 'contact.created', data: { id: 'c_1', email: 'a@b.com' } });
 
   it('accepts a valid signature', () => {

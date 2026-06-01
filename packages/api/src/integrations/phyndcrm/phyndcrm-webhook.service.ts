@@ -26,16 +26,16 @@ import { PrismaService } from '../../lib/prisma/prisma.service';
 const SIGNATURE_VERSION = 'v1';
 const MAX_SIGNATURE_AGE_SECONDS = 5 * 60; // 5 minutes
 
-export type PhyneCrmEvent =
-  | { type: 'contact.created'; data: PhyneCrmContact }
-  | { type: 'contact.updated'; data: PhyneCrmContact }
+export type PhyndCrmEvent =
+  | { type: 'contact.created'; data: PhyndCrmContact }
+  | { type: 'contact.updated'; data: PhyndCrmContact }
   | { type: 'contact.deleted'; data: { id: string } }
   | {
       type: 'engagement.status_changed';
-      data: PhyneCrmEngagementStatus;
+      data: PhyndCrmEngagementStatus;
     };
 
-export interface PhyneCrmContact {
+export interface PhyndCrmContact {
   id: string;
   email: string | null;
   name: string | null;
@@ -44,7 +44,7 @@ export interface PhyneCrmContact {
   externalJanuaId?: string | null;
 }
 
-export interface PhyneCrmEngagementStatus {
+export interface PhyndCrmEngagementStatus {
   engagementId: string;
   contactId: string;
   status: 'active' | 'completed' | 'paused' | 'cancelled';
@@ -57,8 +57,8 @@ export interface SignatureVerificationResult {
 }
 
 @Injectable()
-export class PhyneCrmWebhookService {
-  private readonly context = 'PhyneCrmWebhookService';
+export class PhyndCrmWebhookService {
+  private readonly context = 'PhyndCrmWebhookService';
 
   constructor(
     private readonly config: ConfigService,
@@ -73,9 +73,9 @@ export class PhyneCrmWebhookService {
    * window + timing-safe HMAC compare.
    */
   verifySignature(rawBody: string, headerValue: string | undefined): SignatureVerificationResult {
-    const secret = this.config.get<string>('PHYNECRM_INBOUND_SECRET');
+    const secret = this.config.get<string>('PHYNDCRM_INBOUND_SECRET');
     if (!secret) {
-      this.logger.warn('PHYNECRM_INBOUND_SECRET not configured — rejecting webhook', this.context);
+      this.logger.warn('PHYNDCRM_INBOUND_SECRET not configured — rejecting webhook', this.context);
       return { ok: false, reason: 'no_secret' };
     }
 
@@ -124,7 +124,7 @@ export class PhyneCrmWebhookService {
    * `processed: false` return value, but the route still returns 200
    * so PhyndCRM doesn't retry pathologically.
    */
-  async handleEvent(event: PhyneCrmEvent): Promise<{ processed: boolean; note?: string }> {
+  async handleEvent(event: PhyndCrmEvent): Promise<{ processed: boolean; note?: string }> {
     switch (event.type) {
       case 'contact.created':
       case 'contact.updated':
@@ -145,7 +145,7 @@ export class PhyneCrmWebhookService {
   }
 
   private async handleContactUpsert(
-    contact: PhyneCrmContact,
+    contact: PhyndCrmContact,
   ): Promise<{ processed: boolean; note?: string }> {
     if (!contact.email) {
       return { processed: false, note: 'no_email' };
@@ -198,7 +198,7 @@ export class PhyneCrmWebhookService {
   }
 
   private async handleEngagementStatus(
-    engagement: PhyneCrmEngagementStatus,
+    engagement: PhyndCrmEngagementStatus,
   ): Promise<{ processed: boolean; note?: string }> {
     const result = await this.prisma.cABMembership.updateMany({
       where: { phyndcrmContactId: engagement.contactId },

@@ -19,8 +19,9 @@ RUN cd packages/api && npx prisma generate || true
 
 # Build all packages
 ENV NEXT_TELEMETRY_DISABLED=1
-# Build only the web package and its dependencies (not api which has unresolved deps)
-RUN pnpm build --filter=@coforma/web...
+# Build the deployable web package only. The API package is not part of this
+# image and currently has independent compile blockers.
+RUN pnpm --filter=@coforma/web build
 
 # Production stage
 FROM node:20-alpine AS runner

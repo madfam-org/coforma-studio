@@ -245,10 +245,10 @@ describe('phyndcrmRelay', () => {
   });
 
   it('phyndcrmRelay reads config from process.env when no overrides given', async () => {
-    const prevUrl = process.env.PHYNECRM_OUTBOUND_URL;
-    const prevSecret = process.env.PHYNECRM_OUTBOUND_SECRET;
-    process.env.PHYNECRM_OUTBOUND_URL = URL_OK;
-    process.env.PHYNECRM_OUTBOUND_SECRET = SECRET;
+    const prevUrl = process.env.PHYNDCRM_OUTBOUND_URL;
+    const prevSecret = process.env.PHYNDCRM_OUTBOUND_SECRET;
+    process.env.PHYNDCRM_OUTBOUND_URL = URL_OK;
+    process.env.PHYNDCRM_OUTBOUND_SECRET = SECRET;
     try {
       (globalThis.fetch as FetchMock).mockResolvedValueOnce(
         new Response(null, { status: 200 }),
@@ -261,10 +261,10 @@ describe('phyndcrmRelay', () => {
       const headers = readHeaders(getCall((globalThis.fetch as FetchMock).mock.calls, 0));
       expect(headers['x-coforma-tenant-id']).toBe('tenant-7');
     } finally {
-      if (prevUrl === undefined) delete process.env.PHYNECRM_OUTBOUND_URL;
-      else process.env.PHYNECRM_OUTBOUND_URL = prevUrl;
-      if (prevSecret === undefined) delete process.env.PHYNECRM_OUTBOUND_SECRET;
-      else process.env.PHYNECRM_OUTBOUND_SECRET = prevSecret;
+      if (prevUrl === undefined) delete process.env.PHYNDCRM_OUTBOUND_URL;
+      else process.env.PHYNDCRM_OUTBOUND_URL = prevUrl;
+      if (prevSecret === undefined) delete process.env.PHYNDCRM_OUTBOUND_SECRET;
+      else process.env.PHYNDCRM_OUTBOUND_SECRET = prevSecret;
     }
   });
 });

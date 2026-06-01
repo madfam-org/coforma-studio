@@ -4,10 +4,10 @@
   "private": true,
   "description": "Next.js frontend for Coforma Studio",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node ../../scripts/require-local-services.mjs && next dev",
     "build": "next build",
-    "start": "next start",
-    "clean": "rm -rf .next",
+    "start": "node ../../scripts/require-local-services.mjs && next start",
+    "clean": "node ../../scripts/require-local-destructive.mjs && rm -rf .next",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

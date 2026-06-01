@@ -1,5 +1,8 @@
 # API Test Suite
 
+> [!IMPORTANT]
+> RLS tests may create tenant/customer-shaped fixtures. Keep test data synthetic, never copy production tenant data into fixtures, and guard database resets or seeded tenant datasets as DB/customer-data operations.
+
 This directory contains comprehensive tests for the Coforma Studio API, with a focus on Row-Level Security (RLS) tenant isolation.
 
 ## Test Structure

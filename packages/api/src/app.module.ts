@@ -9,7 +9,7 @@ import { PrismaModule } from './lib/prisma/prisma.module';
 import { HealthModule } from './modules/health/health.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { BillingModule } from './modules/billing/billing.module';
-import { PhyneCrmModule } from './integrations/phyndcrm/phyndcrm.module';
+import { PhyndCrmModule } from './integrations/phyndcrm/phyndcrm.module';
 import { GlobalExceptionFilter } from './lib/errors/global-exception.filter';
 import { LoggerService } from './lib/logger/logger.service';
 
@@ -37,7 +37,7 @@ import { LoggerService } from './lib/logger/logger.service';
     BillingModule,
 
     // Ecosystem integrations
-    PhyneCrmModule,
+    PhyndCrmModule,
 
     // Feature modules will be added here as they are implemented
     // TenantModule,

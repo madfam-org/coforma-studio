@@ -1,5 +1,9 @@
 # @coforma/api
 
+> [!IMPORTANT]
+> The API owns multi-tenant CAB data and RLS enforcement. Treat tenant fixtures, feedback, comments, votes, OAuth integration state, billing references, exports, and webhook payloads as sensitive customer data.
+> Migrations, seeds, Prisma Studio, resets, exports/imports, integration sync, and webhook delivery require explicit operator intent and the matching local guard.
+
 NestJS backend API for Coforma Studio.
 
 **📊 Current Status:** Foundation complete, core features in development
