@@ -11,14 +11,14 @@ import { Body, Controller, Headers, HttpCode, HttpStatus, Post, Req, Unauthorize
 import type { Request } from 'express';
 
 import { LoggerService } from '../../lib/logger/logger.service';
-import { PhyneCrmEvent, PhyneCrmWebhookService } from './phyndcrm-webhook.service';
+import { PhyndCrmEvent, PhyndCrmWebhookService } from './phyndcrm-webhook.service';
 
 @Controller('api/v1/webhooks/phyndcrm')
-export class PhyneCrmWebhookController {
-  private readonly context = 'PhyneCrmWebhookController';
+export class PhyndCrmWebhookController {
+  private readonly context = 'PhyndCrmWebhookController';
 
   constructor(
-    private readonly service: PhyneCrmWebhookService,
+    private readonly service: PhyndCrmWebhookService,
     private readonly logger: LoggerService,
   ) {}
 
@@ -47,7 +47,7 @@ export class PhyneCrmWebhookController {
       throw new UnauthorizedException({ error: 'invalid_signature', reason: verification.reason });
     }
 
-    const event = _body as PhyneCrmEvent;
+    const event = _body as PhyndCrmEvent;
     if (!event || typeof event !== 'object' || !('type' in event) || !('data' in event)) {
       // Verified-but-malformed bodies still log success (signature was
       // valid) and ack so producers don't retry; the operator gets the

@@ -8,7 +8,7 @@
  *
  * Signature: x-madfam-signature: t=<unix>,v1=<hex>
  * HMAC over `${ts}.${rawBody}`. 5-min replay window.
- * Secret env: PHYNECRM_INBOUND_SECRET.
+ * Secret env: PHYNDCRM_INBOUND_SECRET.
  */
 
 import * as crypto from 'crypto';
@@ -20,7 +20,7 @@ const prisma = new PrismaClient();
 const SIGNATURE_HEADER = 'x-madfam-signature';
 const MAX_AGE_SECONDS = 5 * 60;
 
-interface PhyneCrmContact {
+interface PhyndCrmContact {
   id: string;
   email: string | null;
   name: string | null;
@@ -28,18 +28,18 @@ interface PhyneCrmContact {
   tenantId: string;
 }
 
-interface PhyneCrmEngagementStatus {
+interface PhyndCrmEngagementStatus {
   engagementId: string;
   contactId: string;
   status: 'active' | 'completed' | 'paused' | 'cancelled';
   tenantId: string;
 }
 
-type PhyneCrmEvent =
-  | { type: 'contact.created'; data: PhyneCrmContact }
-  | { type: 'contact.updated'; data: PhyneCrmContact }
+type PhyndCrmEvent =
+  | { type: 'contact.created'; data: PhyndCrmContact }
+  | { type: 'contact.updated'; data: PhyndCrmContact }
   | { type: 'contact.deleted'; data: { id: string } }
-  | { type: 'engagement.status_changed'; data: PhyneCrmEngagementStatus };
+  | { type: 'engagement.status_changed'; data: PhyndCrmEngagementStatus };
 
 function verifySignature(
   rawBody: string,
@@ -75,7 +75,7 @@ function verifySignature(
 }
 
 export async function POST(req: Request): Promise<NextResponse> {
-  const secret = process.env.PHYNECRM_INBOUND_SECRET;
+  const secret = process.env.PHYNDCRM_INBOUND_SECRET;
   if (!secret) {
     return NextResponse.json(
       { error: 'invalid_signature', reason: 'no_secret' },
@@ -92,9 +92,9 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  let event: PhyneCrmEvent;
+  let event: PhyndCrmEvent;
   try {
-    event = JSON.parse(rawBody) as PhyneCrmEvent;
+    event = JSON.parse(rawBody) as PhyndCrmEvent;
   } catch {
     return NextResponse.json({ error: 'malformed_payload' }, { status: 400 });
   }

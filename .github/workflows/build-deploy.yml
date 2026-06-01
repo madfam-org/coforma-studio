@@ -5,10 +5,18 @@ on:
     branches: [main]
     paths-ignore: ['**.md', 'docs/**']
   workflow_dispatch:
-
+    inputs:
+      deploy_ack:
+        description: "Type production to approve this production deploy."
+        required: true
+        type: string
+      reason:
+        description: "Production deploy reason (min 12 chars)."
+        required: true
+        type: string
 concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
+  group: coforma-production-kustomization
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -21,6 +29,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Require manual production deploy acknowledgement
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DEPLOY_ACK: ${{ inputs.deploy_ack }}
+          DEPLOY_REASON: ${{ inputs.reason }}
+        run: |
+          if [ "${DEPLOY_ACK}" != "production" ]; then
+            echo "deploy_ack must be production" >&2
+            exit 1
+          fi
+          if [ ${#DEPLOY_REASON} -lt 12 ]; then
+            echo "reason must be at least 12 characters" >&2
+            exit 1
+          fi
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -52,7 +75,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/madfam-org/coforma-studio/web:${{ github.sha }}
-            ghcr.io/madfam-org/coforma-studio/web:latest
           cache-from: type=gha,scope=web
           cache-to: type=gha,mode=max,scope=web
 

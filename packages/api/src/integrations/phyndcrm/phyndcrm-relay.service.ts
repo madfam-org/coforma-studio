@@ -81,8 +81,8 @@ export interface RelayResult {
 }
 
 @Injectable()
-export class PhyneCrmRelayService {
-  private readonly context = 'PhyneCrmRelayService';
+export class PhyndCrmRelayService {
+  private readonly context = 'PhyndCrmRelayService';
   private readonly webhookUrl: string;
   private readonly webhookSecret: string;
   private readonly timeoutMs: number;
@@ -92,16 +92,16 @@ export class PhyneCrmRelayService {
     private readonly config: ConfigService,
     private readonly logger: LoggerService,
   ) {
-    this.webhookUrl = this.config.get<string>('PHYNECRM_OUTBOUND_URL', '');
-    this.webhookSecret = this.config.get<string>('PHYNECRM_OUTBOUND_SECRET', '');
-    this.timeoutMs = this.config.get<number>('PHYNECRM_OUTBOUND_TIMEOUT_MS', 5000);
+    this.webhookUrl = this.config.get<string>('PHYNDCRM_OUTBOUND_URL', '');
+    this.webhookSecret = this.config.get<string>('PHYNDCRM_OUTBOUND_SECRET', '');
+    this.timeoutMs = this.config.get<number>('PHYNDCRM_OUTBOUND_TIMEOUT_MS', 5000);
     this.enabled = !!this.webhookUrl && !!this.webhookSecret;
 
     if (this.enabled) {
       this.logger.log(`PhyndCRM relay initialized -> ${this.webhookUrl}`, this.context);
     } else {
       this.logger.warn(
-        'PhyndCRM relay disabled: PHYNECRM_OUTBOUND_URL or PHYNECRM_OUTBOUND_SECRET not set',
+        'PhyndCRM relay disabled: PHYNDCRM_OUTBOUND_URL or PHYNDCRM_OUTBOUND_SECRET not set',
         this.context,
       );
     }

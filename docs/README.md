@@ -1,5 +1,9 @@
 # Coforma Studio Documentation
 
+> [!IMPORTANT]
+> Do not duplicate raw customer feedback, tenant records, OAuth identities, integration tokens, billing data, exports, webhook payloads, or production credentials in docs. Link to controlled workflows and describe data shapes instead.
+> Operations that export/import customer data, run live integration syncs, or mutate production state require explicit operator intent and the appropriate local guard when invoked from a workstation.
+
 Technical documentation for developers, operators, and stakeholders.
 
 ## 📊 Project Status

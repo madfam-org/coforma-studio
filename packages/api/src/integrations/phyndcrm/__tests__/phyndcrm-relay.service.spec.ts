@@ -15,7 +15,7 @@ import * as crypto from 'crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LoggerService } from '../../../lib/logger/logger.service';
-import { PhyneCrmRelayService, type MemberJoinedPayload } from '../phyndcrm-relay.service';
+import { PhyndCrmRelayService, type MemberJoinedPayload } from '../phyndcrm-relay.service';
 
 const URL = 'https://crm.madfam.io/api/v1/webhooks/coforma';
 const SECRET = 'test-secret';
@@ -24,15 +24,15 @@ function makeService(opts: {
   url?: string;
   secret?: string;
   timeoutMs?: number;
-} = {}): PhyneCrmRelayService {
+} = {}): PhyndCrmRelayService {
   const config = {
     get: <T>(key: string, fallback?: T): T | undefined => {
       switch (key) {
-        case 'PHYNECRM_OUTBOUND_URL':
+        case 'PHYNDCRM_OUTBOUND_URL':
           return (opts.url ?? URL) as unknown as T;
-        case 'PHYNECRM_OUTBOUND_SECRET':
+        case 'PHYNDCRM_OUTBOUND_SECRET':
           return (opts.secret ?? SECRET) as unknown as T;
-        case 'PHYNECRM_OUTBOUND_TIMEOUT_MS':
+        case 'PHYNDCRM_OUTBOUND_TIMEOUT_MS':
           return (opts.timeoutMs ?? 5000) as unknown as T;
         default:
           return fallback;
@@ -46,7 +46,7 @@ function makeService(opts: {
     debug: () => undefined,
     verbose: () => undefined,
   } as unknown as LoggerService;
-  return new PhyneCrmRelayService(config, logger);
+  return new PhyndCrmRelayService(config, logger);
 }
 
 const PAYLOAD: MemberJoinedPayload = {
@@ -60,7 +60,7 @@ const PAYLOAD: MemberJoinedPayload = {
   phyndcrmContactId: null,
 };
 
-describe('PhyneCrmRelayService', () => {
+describe('PhyndCrmRelayService', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn());
   });

@@ -1,5 +1,9 @@
 # @coforma/web
 
+> [!IMPORTANT]
+> The web app can expose CAB/customer feedback, auth sessions, integration state, billing flows, and analytics events. Avoid logging or documenting raw customer data, tokens, or production session material.
+> Live auth, billing, integration, and production endpoint exercises are side-effectful customer-data operations.
+
 Next.js frontend application for Coforma Studio.
 
 **📊 Current Status:** Basic pages implemented, tRPC integration in progress
