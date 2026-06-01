@@ -1,5 +1,11 @@
 # Coforma Studio Agent Operating Guide
 
+Customer/CAB data and side-effect rules:
+- Treat tenants, users, memberships, Customer Advisory Board sessions, comments, votes, feedback, recordings/transcripts, OAuth identities, integration tokens, Stripe billing data, R2 exports/uploads, webhook payloads, analytics events, and generated reports as sensitive customer/business data.
+- Treat DB migrations/seeds/resets, Prisma Studio, local service stacks, RLS test fixtures with tenant data, exports/imports, webhook delivery, OAuth/integration sync, billing flows, SDK/package publishing, and GitOps deploys as side-effectful. Run them only after explicit operator request and the matching local guard environment variable.
+- Placeholder-only secrets belong in examples and docs: NextAuth, OAuth/OIDC, Stripe, R2/Cloudflare, Meilisearch, Resend, Slack, Zoom, Jira, Asana, ClickUp, Sentry/PostHog, npm/GitHub, database, and Redis credentials.
+- Local guard variables: `LOCAL_SERVICES=yes` for service stacks/dev servers, `LOCAL_DB=yes` for migrations/seeds/Prisma Studio, `LOCAL_DESTRUCTIVE=yes` for cleanup/reset flows, `LOCAL_CUSTOMER_DATA_OPS=yes` for tenant/customer data, exports, webhooks, integrations, billing, or package publishing, and `LOCAL_PRODUCTION_OPS=yes` for deploy or live production operations.
+
 > [!IMPORTANT]
 > MADFAM-ENCLII-FIRST-LEGACY-RAW v1: This document contains legacy raw infrastructure command examples.
 > Routine production operations must use Enclii web, API, or CLI. Treat raw

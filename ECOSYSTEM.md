@@ -1,6 +1,10 @@
 # coforma-studio — Ecosystem Context
 
 > [!IMPORTANT]
+> Coforma is a customer-advisory and sentiment surface that can feed Tulana PMF and ecosystem go-to-market decisions. Treat tenant/customer records, CAB feedback, integration payloads, billing state, and exported artifacts as sensitive customer/business data.
+> Live deploys, DB changes, exports/imports, webhook delivery, integration sync, package publishing, and billing operations require explicit operator intent plus `LOCAL_SERVICES`, `LOCAL_DB`, `LOCAL_DESTRUCTIVE`, `LOCAL_CUSTOMER_DATA_OPS`, or `LOCAL_PRODUCTION_OPS` as applicable.
+
+> [!IMPORTANT]
 > MADFAM-ENCLII-FIRST-LEGACY-RAW v1: This document contains legacy raw infrastructure command examples.
 > Routine production operations must use Enclii web, API, or CLI. Treat raw
 > `kubectl`, `helm`, SSH, provider CLI/API, `docker exec`, and direct container

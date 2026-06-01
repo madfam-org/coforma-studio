@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start": "turbo run start",
+    "start": "node ./scripts/require-local-services.mjs && turbo run start",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "test:e2e": "turbo run test:e2e",
@@ -27,14 +27,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean && rm -rf node_modules",
-    "postinstall": "pnpm --filter=api exec prisma generate",
+    "clean": "node ./scripts/require-local-destructive.mjs && turbo run clean && rm -rf node_modules",
+    "postinstall": "node ./scripts/require-local-db.mjs && pnpm --filter=api exec prisma generate",
     "prepare": "husky install",
-    "db:migrate": "pnpm --filter=api prisma migrate dev",
-    "db:deploy": "pnpm --filter=api prisma migrate deploy",
-    "db:seed": "pnpm --filter=api prisma db seed",
-    "db:studio": "pnpm --filter=api prisma studio",
-    "db:reset": "pnpm --filter=api prisma migrate reset"
+    "db:migrate": "node ./scripts/require-local-db.mjs && pnpm --filter=api prisma migrate dev",
+    "db:deploy": "node ./scripts/require-local-production-ops.mjs && pnpm --filter=api prisma migrate deploy",
+    "db:seed": "node ./scripts/require-local-db.mjs && pnpm --filter=api prisma db seed",
+    "db:studio": "node ./scripts/require-local-db.mjs && pnpm --filter=api prisma studio",
+    "db:reset": "node ./scripts/require-local-destructive.mjs && pnpm --filter=api prisma migrate reset"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
