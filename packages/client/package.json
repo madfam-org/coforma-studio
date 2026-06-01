@@ -24,9 +24,9 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch",
+    "dev": "node ../../scripts/require-local-services.mjs && tsup --watch",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "node ../../scripts/require-local-destructive.mjs && rm -rf dist"
   },
   "dependencies": {},
   "devDependencies": {

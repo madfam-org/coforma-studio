@@ -16,7 +16,7 @@
  * either source as the same event:
  *
  *   - Header  x-madfam-signature: t=<unix>,v1=<hex>
- *   - HMAC over `${ts}.${rawBody}` with PHYNECRM_OUTBOUND_SECRET
+ *   - HMAC over `${ts}.${rawBody}` with PHYNDCRM_OUTBOUND_SECRET
  *   - Header  idempotency-key: stable per (event-type, entity-id)
  *   - Header  x-coforma-tenant-id: PhyndCRM-side tenant id
  *
@@ -91,15 +91,15 @@ export interface RelayConfig {
 
 /**
  * Resolve relay config from environment. Names match the NestJS service
- * for symmetry with the inbound webhook (PHYNECRM_INBOUND_SECRET) and so
+ * for symmetry with the inbound webhook (PHYNDCRM_INBOUND_SECRET) and so
  * a single rotation procedure covers both directions.
  */
 export function getRelayConfig(): RelayConfig {
-  const timeoutRaw = process.env.PHYNECRM_OUTBOUND_TIMEOUT_MS;
+  const timeoutRaw = process.env.PHYNDCRM_OUTBOUND_TIMEOUT_MS;
   const timeoutMs = timeoutRaw ? Number.parseInt(timeoutRaw, 10) : NaN;
   return {
-    url: process.env.PHYNECRM_OUTBOUND_URL ?? '',
-    secret: process.env.PHYNECRM_OUTBOUND_SECRET ?? '',
+    url: process.env.PHYNDCRM_OUTBOUND_URL ?? '',
+    secret: process.env.PHYNDCRM_OUTBOUND_SECRET ?? '',
     timeoutMs: Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : DEFAULT_TIMEOUT_MS,
   };
 }
