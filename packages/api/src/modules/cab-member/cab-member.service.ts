@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
-import { PhyneCrmRelayService } from '../../integrations/phyndcrm/phyndcrm-relay.service';
+import { PhyndCrmRelayService } from '../../integrations/phyndcrm/phyndcrm-relay.service';
 import { PrismaService } from '../../lib/prisma/prisma.service';
 import { LoggerService } from '../../lib/logger/logger.service';
 import {
@@ -25,7 +25,7 @@ export class CABMemberService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly logger: LoggerService,
-    private readonly phyneCrmRelay: PhyneCrmRelayService,
+    private readonly phyndCrmRelay: PhyndCrmRelayService,
   ) {}
 
   /**
@@ -33,7 +33,7 @@ export class CABMemberService {
    * suspenders even though the relay itself never throws. Uses the
    * tenant's `phyndcrmTenantId` mapping; skips if unset.
    */
-  private async emitToPhynecrm(
+  private async emitToPhyndcrm(
     tenantId: string,
     fire: (phyndcrmTenantId: string) => Promise<unknown>,
   ): Promise<void> {
@@ -138,8 +138,8 @@ export class CABMemberService {
       this.logger.log(`Member added successfully: ${member.id}`, 'CABMemberService');
 
       // Fan out to PhyndCRM (best-effort; never throws into this path).
-      void this.emitToPhynecrm(tenantId, (phyndcrmTenantId) =>
-        this.phyneCrmRelay.emitMemberJoined(phyndcrmTenantId, {
+      void this.emitToPhyndcrm(tenantId, (phyndcrmTenantId) =>
+        this.phyndCrmRelay.emitMemberJoined(phyndcrmTenantId, {
           membershipId: member.id,
           cabId: cab.id,
           cabSlug: cab.slug,

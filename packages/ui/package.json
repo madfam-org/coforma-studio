@@ -17,13 +17,13 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
-    "clean": "rm -rf dist",
+    "dev": "node ../../scripts/require-local-services.mjs && tsc --watch",
+    "clean": "node ../../scripts/require-local-destructive.mjs && rm -rf dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "test": "vitest",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "node ../../scripts/require-local-services.mjs && storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {

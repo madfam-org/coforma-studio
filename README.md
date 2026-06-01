@@ -1,5 +1,9 @@
 # Coforma Studio
 
+> [!IMPORTANT]
+> Coforma Studio handles multi-tenant CAB/customer data, feedback, comments, votes, OAuth identities, integration tokens, billing data, object-storage exports, webhooks, and analytics events.
+> DB mutations, RLS fixtures, exports/imports, webhooks, integration sync, billing flows, package publishing, and deploy workflows are side-effectful. Keep examples placeholder-only and set the matching local guard env var only for an explicit operation.
+
 **Domain:** [coforma.studio](https://coforma.studio)
 **Developer:** Innovaciones MADFAM ([innovacionesmadfam.dev](https://innovacionesmadfam.dev))
 **Parent Company:** Innovaciones MADFAM S.A.S. de C.V. ([madfam.io](https://madfam.io))

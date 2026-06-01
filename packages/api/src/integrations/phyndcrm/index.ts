@@ -1,10 +1,10 @@
-export { PhyneCrmModule } from './phyndcrm.module';
-export { PhyneCrmRelayService } from './phyndcrm-relay.service';
-export { PhyneCrmWebhookService } from './phyndcrm-webhook.service';
+export { PhyndCrmModule } from './phyndcrm.module';
+export { PhyndCrmRelayService } from './phyndcrm-relay.service';
+export { PhyndCrmWebhookService } from './phyndcrm-webhook.service';
 export type {
-  PhyneCrmContact,
-  PhyneCrmEngagementStatus,
-  PhyneCrmEvent,
+  PhyndCrmContact,
+  PhyndCrmEngagementStatus,
+  PhyndCrmEvent,
   SignatureVerificationResult,
 } from './phyndcrm-webhook.service';
 export type {
