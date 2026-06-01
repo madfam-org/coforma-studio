@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { PhyneCrmModule } from '../../integrations/phyndcrm/phyndcrm.module';
+import { PhyndCrmModule } from '../../integrations/phyndcrm/phyndcrm.module';
 import { CABMemberService } from './cab-member.service';
 
 @Module({
-  imports: [PhyneCrmModule],
+  imports: [PhyndCrmModule],
   providers: [CABMemberService],
   exports: [CABMemberService],
 })

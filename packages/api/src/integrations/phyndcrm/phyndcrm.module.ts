@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { PhyneCrmRelayService } from './phyndcrm-relay.service';
-import { PhyneCrmWebhookController } from './phyndcrm-webhook.controller';
-import { PhyneCrmWebhookService } from './phyndcrm-webhook.service';
+import { PhyndCrmRelayService } from './phyndcrm-relay.service';
+import { PhyndCrmWebhookController } from './phyndcrm-webhook.controller';
+import { PhyndCrmWebhookService } from './phyndcrm-webhook.service';
 
 @Module({
-  controllers: [PhyneCrmWebhookController],
-  providers: [PhyneCrmWebhookService, PhyneCrmRelayService],
-  exports: [PhyneCrmWebhookService, PhyneCrmRelayService],
+  controllers: [PhyndCrmWebhookController],
+  providers: [PhyndCrmWebhookService, PhyndCrmRelayService],
+  exports: [PhyndCrmWebhookService, PhyndCrmRelayService],
 })
-export class PhyneCrmModule {}
+export class PhyndCrmModule {}
