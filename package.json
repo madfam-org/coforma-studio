@@ -28,7 +28,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "typecheck": "turbo run typecheck",
     "clean": "node ./scripts/require-local-destructive.mjs && turbo run clean && rm -rf node_modules",
-    "postinstall": "node ./scripts/require-local-db.mjs && pnpm --filter=api exec prisma generate",
+    "postinstall": "pnpm --filter=api exec prisma generate",
     "prepare": "husky install",
     "db:migrate": "node ./scripts/require-local-db.mjs && pnpm --filter=api prisma migrate dev",
     "db:deploy": "node ./scripts/require-local-production-ops.mjs && pnpm --filter=api prisma migrate deploy",
