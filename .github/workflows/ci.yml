@@ -241,7 +241,7 @@ jobs:
           NEXTAUTH_SECRET: test-secret
 
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         if: always()
         with:
           files: ./coverage/lcov.info
