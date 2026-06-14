@@ -47,6 +47,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
+    "shadcn": "^4.11.0",
     "turbo": "2.9.6",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.59.2"
