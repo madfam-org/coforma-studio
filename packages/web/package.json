@@ -20,7 +20,7 @@
     "@coforma/api": "workspace:*",
     "@coforma/types": "workspace:*",
     "@coforma/ui": "workspace:*",
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^5.9.1",
     "@janua/react-sdk": "^0.1.4",
     "@prisma/client": "6.1.0",
     "@sentry/nextjs": "^7.99.0",
