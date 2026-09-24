@@ -48,7 +48,7 @@
     "@nestjs/throttler": "^5.1.1",
     "@prisma/client": "6.1.0",
     "@sentry/node": "^10",
-    "@trpc/server": "^10.45.0",
+    "@trpc/server": "^11.18.0",
     "bullmq": "^5.1.9",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
