@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build-and-deploy:
     name: Build, Push & Update Manifests
-    runs-on: ${{ vars.ARC_BOOTSTRAP_COMPLETE == 'true' && 'madfam-runners-blue' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.ARC_BOOTSTRAP_COMPLETE == 'true' && 'madfam-runners-blue' || 'ubuntu-24.04' }}
     permissions:
       contents: write
       packages: write
