@@ -12,7 +12,7 @@ env:
 jobs:
   networkpolicy-port-lint:
     name: NetworkPolicy port consistency
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 3
     # Prevents the 2026-05-04 status.enclii.dev outage class:
     # NetworkPolicy `ports:` clauses that don't intersect the selected pods'
@@ -31,7 +31,7 @@ jobs:
 
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -93,7 +93,7 @@ jobs:
 
   typecheck:
     name: Type Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -135,7 +135,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -183,7 +183,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         # No `credentials:` here. postgres:15 is a public official image, these
@@ -278,7 +278,7 @@ jobs:
 
   security:
     name: Security Scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Uploading a SARIF file needs security-events: write. This repo's default
     # GITHUB_TOKEN permission is read-only, which is why the upload failed with
     # the very unhelpful "Resource not accessible by integration". Granting it
