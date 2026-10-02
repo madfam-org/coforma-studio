@@ -14,3 +14,24 @@ Compact LLM context index for this repository.
 Routine production operations are Enclii-first. Use Enclii web, API, or CLI
 before raw infrastructure tools. Direct `kubectl`, `helm`, SSH, provider CLIs,
 `docker exec`, or direct container access is bootstrap/break-glass only.
+
+## What this repo is
+
+Coforma Studio: Customer Advisory Boards as a service. pnpm/turbo monorepo:
+`packages/web` (Next.js 15.5 App Router, tRPC 10.45), `packages/api` (NestJS +
+Prisma, Postgres with row-level security), `packages/types`, `packages/ui`,
+`packages/client`.
+
+## Key docs
+
+- `AGENTS.md` "Current state" — stack, deploy, CI gates, known gaps, backlog, related repositories and contracts.
+- `PROJECT_STATUS.md` — authoritative status.
+- `docs/deployment.md` — current deploy path at the top; the Vercel/Railway material below it is historical.
+- `docs/deploy-readiness.md` — why only the web shell ships.
+
+## Facts that are easy to get wrong
+
+- Only the web image deploys (in-repo `build-deploy.yml` → GHCR → cosign → digest pin → Argo CD). The API is not deployed. Vercel and Railway are not used.
+- CI jobs are pinned to `ubuntu-24.04`, not `ubuntu-latest`.
+- `@coforma/web` ESLint (#113) and `pnpm format:check` (#114) are advisory in CI.
+- Identity is Janua; billing is meant to be Dhanam but is not integrated; Stripe mentions are historical.

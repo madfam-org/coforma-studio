@@ -1,6 +1,6 @@
 # Coforma Studio — Project Status
 
-**Last Updated:** 2026-07-04
+**Last Updated:** 2026-07-04 (deploy, CI and dependency facts re-verified 2026-10-01; see `AGENTS.md` "Current state")
 **Current Phase:** Foundation
 **Production Ready:** No
 
@@ -20,7 +20,7 @@ status report (2025-11-19) is preserved at
 | **Tests** | 12 test/spec files (API specs, RLS tenant-isolation, web route tests, smoke tests) |
 | **Auth** | Janua OIDC implemented (`packages/web/src/lib/auth.ts`); NextAuth reduced to a deprecated redirect stub |
 | **Billing** | `@madfam/billing` NestJS module wired via Janua client; no payment processor integrated (unused `stripe*` Prisma columns remain) |
-| **Deploy** | GitHub Actions → GHCR images (cosign-signed) → `infra/k8s/production/` manifests (web, api, admin) via Argo CD |
+| **Deploy** | GitHub Actions (`build-deploy.yml`) → GHCR **web** image (cosign-signed) → digest pin in `infra/k8s/production/kustomization.yaml` → Argo CD. Only `web-deployment.yaml` is in the kustomization; api and admin manifests exist but are not deployed |
 | **Enclii** | `enclii.yaml` is **status-only** (feeds status.madfam.io); runtime/network onboarding onto the Enclii pipeline is pending |
 | **Production Ready** | No — features incomplete, foundation phase |
 
@@ -40,8 +40,9 @@ status report (2025-11-19) is preserved at
   webhook.
 - **Infra:** Kubernetes production manifests (deployments/services for web,
   api, admin; network policies; kustomization with pinned image digests),
-  Argo CD config, CI (`ci.yml`) and gated build/deploy workflow
-  (`build-deploy.yml` requires a manual production acknowledgement).
+  Argo CD config, CI (`ci.yml`) and the build/deploy workflow
+  (`build-deploy.yml` deploys web on every non-docs push to `main`; a manual
+  `workflow_dispatch` requires a production acknowledgement and reason).
 - **Local dev:** `docker-compose.yml` provides PostgreSQL 15, Redis 7,
   Meilisearch v1.5.
 

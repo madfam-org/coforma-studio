@@ -55,6 +55,95 @@ redirect and should not become the source of truth again.
 Regenerate or repair these files with
 `internal-devops/scripts/sync-agent-docs.py` from the labspace ecosystem.
 
+## Current state (verified 2026-10-01)
+
+This section is current. The imported legacy guidance below is kept for
+context; where they disagree, this section, `README.md` and `PROJECT_STATUS.md`
+win.
+
+### Stack
+
+- `packages/web`: Next.js 15.5.27 (App Router), tRPC 10.45.4.
+- `packages/api`: NestJS + Prisma (not deployed; see Deploy).
+- `packages/types`, `packages/ui`, `packages/client`.
+- #144 (2026-10-01) took `pnpm audit --prod` from 1 critical / 51 high to 0
+  critical / 2 high. Both remaining highs are `postcss` 8.4.31, which `next`
+  pins exactly. Range-scoped overrides cover `fast-xml-parser`, `multer`,
+  `path-to-regexp`, `lodash`, `js-yaml` and `rollup`.
+
+### Deploy
+
+- `.github/workflows/build-deploy.yml` is an in-repo pipeline (it does not
+  call the Enclii reusable workflow). It builds only the **web** image from the
+  root `Dockerfile`, pushes `ghcr.io/madfam-org/coforma-studio/web:<sha>`,
+  signs it with cosign (three attempts), and resolves the digest from the
+  registry. It then commits `deploy(web): pin digest <short> [skip ci]` to
+  `infra/k8s/production/kustomization.yaml`, and Argo CD reconciles.
+- It triggers on pushes to `main`, except changes limited to `**.md` and
+  `docs/**`. `llms.txt` and `llms-full.txt` are not `**.md`, so changing them
+  rebuilds web. `workflow_dispatch` needs `deploy_ack=production` and a reason
+  of at least 12 characters.
+- The concurrency group `coforma-production-kustomization` does not cancel
+  in-progress runs.
+- Only `web-deployment.yaml` is in the kustomization `resources:`. The
+  `api-deployment.yaml` and `admin-deployment.yaml` manifests are not
+  deployed. `docs/deploy-readiness.md` (2026-07-07) explains why.
+- Runners: the deploy job uses ARC (`madfam-runners-blue`) when
+  `ARC_BOOTSTRAP_COMPLETE` is `true`, otherwise `ubuntu-24.04`. CI jobs are
+  pinned to `ubuntu-24.04` (#145), ahead of GitHub moving `ubuntu-latest` to
+  Ubuntu 26 on 2026-10-19. Do not reintroduce `ubuntu-latest`.
+
+### Tests and CI gates
+
+`ci.yml`:
+
+- Blocking:
+  - NetworkPolicy port lint;
+  - ESLint for every package except `@coforma/web`;
+  - `pnpm typecheck`;
+  - `pnpm build`;
+  - `pnpm test` (turbo, vitest per package) after `pnpm db:migrate:test`
+    against a Postgres service container;
+  - a Trivy filesystem scan with SARIF upload.
+- Advisory (`continue-on-error`):
+  - `@coforma/web` ESLint, tracked in #113;
+  - `pnpm format:check`, tracked in #114.
+
+Known gaps:
+
+- The root `tests/api/*.test.ts` files (health, boards, feedback) call a
+  running server at `API_URL`. Nothing in CI runs them: the root `test` script
+  is turbo, and the root is not a workspace package.
+- `packages/web` Playwright (`test:e2e`) is not run in CI.
+- No skipped (`.skip`/`.only`) tests, and no known flaky tests. CI on `main`
+  has been green since 2026-08-14.
+
+### Backlog
+
+- **Next image optimizer posture.** `packages/web/next.config.*` keeps the
+  optimizer on, with `images.domains: ['cdn.coforma.studio']` and a
+  `remotePatterns` wildcard `**.r2.dev`. The fleet posture after
+  GHSA-2xp9-vwfh-vxw4 is `images.unoptimized: true` plus an exact
+  `remotePatterns` allow-list, with `/_next/image` returning 404. `next`
+  15.5.27 includes the advisory fix, so this is defence in depth.
+- **Janua verification.** `packages/web/src/lib/auth.ts` verifies the
+  `janua_session` cookie against a shared `JANUA_JWT_SECRET`, not Janua's
+  JWKS.
+- **Billing.** Dhanam is the mandated platform and is not integrated. The
+  Stripe references in the legacy section below are historical.
+
+### Related repositories / contracts
+
+| Contract                                  | Coforma side                                                                                   | Other side                                                                                                                                         |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Janua identity                            | `packages/web/src/lib/auth.ts`                                                                 | [janua `docs/guides/ECOSYSTEM_INTEGRATION.md`](https://github.com/madfam-org/janua/blob/main/docs/guides/ECOSYSTEM_INTEGRATION.md)                 |
+| PhyndCRM events out (`x-madfam-signature`) | `packages/web/src/lib/phyndcrm-relay.ts`, `packages/api/src/integrations/phyndcrm/phyndcrm-relay.service.ts` | [phynd-crm `README.md`](https://github.com/madfam-org/phynd-crm/blob/main/README.md)                                                                 |
+| PhyndCRM webhooks in                      | `packages/api/src/integrations/phyndcrm/phyndcrm-webhook.service.ts`                           | [phynd-crm `docs/ENGAGEMENT_EVENT_TAXONOMY.md`](https://github.com/madfam-org/phynd-crm/blob/main/docs/ENGAGEMENT_EVENT_TAXONOMY.md)               |
+| Tulana PMF events                         | `packages/api/src/integrations/tulana/cab-event-webhook.service.ts`                            | Tulana `/v1/pmf/coforma-event` (the Tulana repository is not public)                                                                               |
+
+Other MADFAM services that emit to PhyndCRM copy the byte-identical wire format
+from `packages/web/src/lib/phyndcrm-relay.ts`.
+
 ---
 
 ## Legacy CLAUDE.md guidance imported on 2026-05-13
@@ -233,7 +322,7 @@ pnpm test             # Run tests
 | **Communication** | Slack, Email |
 | **Project Management** | Jira, Asana, ClickUp |
 | **CRM** | HubSpot, Salesforce |
-| **Payments** | Stripe |
+| **Payments** | Dhanam (mandated; not integrated yet). Stripe was the original plan. |
 | **Calendar** | Google Calendar, Outlook |
 
 ---
@@ -363,20 +452,18 @@ pnpm dev
 ```
 
 ### Production
-- **Frontend**: Vercel
-- **Backend**: Railway
-- **Database**: Railway PostgreSQL
-- **Search**: Railway Meilisearch
-- **CDN**: Cloudflare
+Superseded. Vercel and Railway are not used. The web image ships through
+`build-deploy.yml` → GHCR → digest pin → Argo CD, and the API is not deployed.
+See "Current state" above and `docs/deployment.md`.
 
 ---
 
 ## Related Documentation
 
 - **PROJECT_STATUS.md** - Current phase details
-- **ARCHITECTURE.md** - Technical architecture
-- **INTEGRATIONS.md** - Integration guides
-- **API.md** - API reference
+- **docs/architecture/SOFTWARE_SPEC.md** and **docs/architecture/TECH_STACK.md** - Technical architecture
+- **docs/api-specification.md** - API reference
+- **docs/deploy-readiness.md** - What ships and what does not
 
 ---
 
@@ -393,7 +480,7 @@ dogfood Coforma to run our own CABs while the platform matures from 40% → 80%.
 | Tenant slug | `madfam-internal` |
 | Tenant name | MADFAM Internal — PMF Measurement |
 | Visibility | Private (no public listing) |
-| Owner | `aldoruizluna@madfam.io` (TenantRole.ADMIN) |
+| Owner | MADFAM operator account (TenantRole.ADMIN; set in the seed) |
 | Seed | `packages/api/prisma/seeds/madfam-internal-tenant.ts` |
 
 ### Active CABs
