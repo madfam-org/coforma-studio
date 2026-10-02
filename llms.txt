@@ -24,7 +24,7 @@ Prisma, Postgres with row-level security), `packages/types`, `packages/ui`,
 
 ## Key docs
 
-- `AGENTS.md` "Current state" — stack, deploy, CI gates, known gaps, backlog, related repositories and contracts.
+- `AGENTS.md` "Current state" — stack, deploy, CI gates, known gaps, related repositories and contracts; "Pending work" is the single prioritized backlog.
 - `PROJECT_STATUS.md` — authoritative status.
 - `docs/deployment.md` — current deploy path at the top; the Vercel/Railway material below it is historical.
 - `docs/deploy-readiness.md` — why only the web shell ships.
@@ -35,3 +35,4 @@ Prisma, Postgres with row-level security), `packages/types`, `packages/ui`,
 - CI jobs are pinned to `ubuntu-24.04`, not `ubuntu-latest`.
 - `@coforma/web` ESLint (#113) and `pnpm format:check` (#114) are advisory in CI.
 - Identity is Janua; billing is meant to be Dhanam but is not integrated; Stripe mentions are historical.
+- The product routes under `packages/web/src/app` (including Janua sign-in) are not in the shipped build; shipping them is an owner decision (`docs/deploy-readiness.md`, F1).
