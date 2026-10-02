@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+
+import { SESSION_COOKIE_NAME, verifySessionToken } from './session-token';
 
 const prisma = new PrismaClient();
 
@@ -9,10 +10,7 @@ export const januaConfig = {
   clientId: process.env.JANUA_CLIENT_ID!,
   clientSecret: process.env.JANUA_CLIENT_SECRET!,
   issuerUrl: process.env.JANUA_ISSUER_URL!,
-  jwtSecret: process.env.JANUA_JWT_SECRET!,
 };
-
-const COOKIE_NAME = 'janua_session';
 
 export interface SessionUser {
   id: string;
@@ -35,20 +33,23 @@ export interface AppSession {
 
 /**
  * Server-side session verification.
- * Reads the Janua session cookie, verifies the JWT with jose,
- * then enriches with tenant memberships from Prisma.
+ * Reads the `janua_session` cookie, which is Coforma's own HS256 session token
+ * (see `./session-token`), verifies it, then enriches it with tenant
+ * memberships from Prisma.
  */
 export async function getSession(): Promise<AppSession | null> {
   const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(COOKIE_NAME);
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
 
   if (!sessionCookie) {
     return null;
   }
 
   try {
-    const secret = new TextEncoder().encode(januaConfig.jwtSecret);
-    const { payload } = await jwtVerify(sessionCookie.value, secret);
+    const payload = await verifySessionToken(sessionCookie.value);
+    if (!payload) {
+      return null;
+    }
 
     // Extract user info from JWT payload.
     // The JWT may nest user data under a `data` claim (Janua server client format)

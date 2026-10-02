@@ -64,8 +64,9 @@ gap or incident link.
 - Invariant: the web app's Next image optimizer is off
   (`images.unoptimized: true`, `remotePatterns: []`, `/_next/image` → 404),
   guarded by `packages/web/src/__tests__/next-config-images.test.ts`.
-- Backlog: Janua session verification uses a shared secret, not JWKS. Dhanam
-  billing is not integrated.
+- Backlog: Dhanam billing is not integrated. (The `janua_session` cookie is
+  Coforma's own HS256 session token, `packages/web/src/lib/session-token.ts`,
+  not a Janua token, so no JWKS port is needed.)
 
 ## Related repositories / contracts
 

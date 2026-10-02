@@ -32,8 +32,10 @@ status report (2025-11-19) is preserved at
   `packages/api` (NestJS + Prisma), `packages/types`, `packages/ui`.
 - **Database:** PostgreSQL schema with Row-Level Security migrations for
   tenant isolation (`packages/api/prisma/`).
-- **Auth:** Janua OIDC session handling (JWT via `jose`, `janua_session`
-  cookie), signin/signup/signout pages and callback route.
+- **Auth:** Janua OIDC login with a Coforma-minted HS256 session cookie
+  (`janua_session`, `packages/web/src/lib/session-token.ts`), signin/signup/
+  signout pages and callback route. These live under `src/app`, which is not
+  in the shipped build yet (`docs/deploy-readiness.md`, F1).
 - **Billing scaffolding:** subscription/tier/feature/usage guards from
   `@madfam/billing/nestjs`, configured against `auth.madfam.io`.
 - **Integrations code:** PhyndCRM relay/webhook services, Tulana CAB event
