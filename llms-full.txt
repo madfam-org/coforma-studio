@@ -61,10 +61,11 @@ gap or incident link.
   (advisory, #114), typecheck, build, vitest per package after test-database
   migrations, and Trivy. The root `tests/api/*.test.ts` live-server tests and
   the web Playwright suite do not run in CI.
-- Backlog: Next image optimizer still on (`images.domains` plus a
-  `**.r2.dev` wildcard; the fleet posture is `images.unoptimized: true` with an
-  exact allow-list). Janua session verification uses a shared secret, not
-  JWKS. Dhanam billing is not integrated.
+- Invariant: the web app's Next image optimizer is off
+  (`images.unoptimized: true`, `remotePatterns: []`, `/_next/image` → 404),
+  guarded by `packages/web/src/__tests__/next-config-images.test.ts`.
+- Backlog: Janua session verification uses a shared secret, not JWKS. Dhanam
+  billing is not integrated.
 
 ## Related repositories / contracts
 
