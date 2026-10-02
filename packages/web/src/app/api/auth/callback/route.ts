@@ -1,11 +1,14 @@
 import { PrismaClient } from '@prisma/client';
-import { SignJWT } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
+import {
+  SESSION_COOKIE_NAME,
+  SESSION_MAX_AGE_SECONDS,
+  sessionSecret,
+  signSessionToken,
+} from '@/lib/session-token';
 
-const COOKIE_NAME = 'janua_session';
-const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days in seconds
+const prisma = new PrismaClient();
 
 /**
  * Handle the OIDC authorization code callback from Janua.
@@ -15,7 +18,8 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days in seconds
  * 2. Extract user info from the ID token or userinfo endpoint
  * 3. Upsert the user in the local database
  * 4. Load tenant memberships
- * 5. Create a signed session JWT cookie containing user + tenants
+ * 5. Create Coforma's own HS256 session JWT cookie (user + tenants); see
+ *    `lib/session-token.ts`. It is not a Janua token.
  * 6. Redirect to the app
  */
 export async function GET(request: NextRequest) {
@@ -34,10 +38,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/error?error=MissingCode', request.url));
   }
 
+  // Refuse to start a session that could not be signed safely (an empty HMAC
+  // key would make the cookie forgeable).
+  const sessionKey = sessionSecret();
+  if (!sessionKey) {
+    console.error('JANUA_JWT_SECRET is not configured; refusing to create a session');
+    return NextResponse.redirect(new URL('/auth/error?error=Configuration', request.url));
+  }
+
   const issuerUrl = process.env.JANUA_ISSUER_URL!;
   const clientId = process.env.JANUA_CLIENT_ID!;
   const clientSecret = process.env.JANUA_CLIENT_SECRET!;
-  const jwtSecret = process.env.JANUA_JWT_SECRET!;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || request.nextUrl.origin;
   const redirectUri = `${appUrl}/api/auth/callback`;
 
@@ -119,24 +130,22 @@ export async function GET(request: NextRequest) {
       role: m.role,
     }));
 
-    // Step 5: Create a signed session JWT
-    const secret = new TextEncoder().encode(jwtSecret);
-    const sessionJwt = await new SignJWT({
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          tenants,
+    // Step 5: Create Coforma's session JWT (HS256, see lib/session-token)
+    const sessionJwt = await signSessionToken(
+      {
+        data: {
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            tenants,
+          },
         },
       },
-    })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setSubject(user.id)
-      .setIssuedAt()
-      .setExpirationTime(`${SESSION_MAX_AGE}s`)
-      .sign(secret);
+      user.id,
+      sessionKey,
+    );
 
     // Step 6: Set cookie and redirect
     // Determine where to redirect: use state param, first tenant, or home
@@ -149,12 +158,12 @@ export async function GET(request: NextRequest) {
     }
 
     const response = NextResponse.redirect(new URL(redirectTo, request.url));
-    response.cookies.set(COOKIE_NAME, sessionJwt, {
+    response.cookies.set(SESSION_COOKIE_NAME, sessionJwt, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: SESSION_MAX_AGE,
+      maxAge: SESSION_MAX_AGE_SECONDS,
     });
 
     return response;

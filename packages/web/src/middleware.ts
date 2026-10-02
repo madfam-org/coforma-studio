@@ -1,7 +1,6 @@
-import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
-const COOKIE_NAME = 'janua_session';
+import { SESSION_COOKIE_NAME, sessionSecret, verifySessionToken } from './lib/session-token';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -15,8 +14,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for the Janua session cookie
-  const sessionCookie = request.cookies.get(COOKIE_NAME);
+  // Check for the session cookie (Coforma's own token, see lib/session-token)
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
 
   if (!sessionCookie) {
     const loginUrl = new URL('/auth/signin', request.url);
@@ -24,17 +23,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Verify the JWT
-  const jwtSecret = process.env.JANUA_JWT_SECRET;
-  if (!jwtSecret) {
-    // Misconfiguration -- let the request through and let the server-side
-    // session check handle the error gracefully.
-    return NextResponse.next();
+  // Verify the JWT. Without a secret no session can be trusted, so fail
+  // closed (before, the request was let through on a missing secret).
+  const key = sessionSecret();
+  if (!key) {
+    console.error('JANUA_JWT_SECRET is not configured; rejecting the session');
+    const loginUrl = new URL('/auth/signin', request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
-    const secret = new TextEncoder().encode(jwtSecret);
-    const { payload } = await jwtVerify(sessionCookie.value, secret);
+    const payload = await verifySessionToken(sessionCookie.value, key);
+    if (!payload) {
+      throw new Error('invalid session token');
+    }
 
     // Extract tenant info from the JWT to do tenant-scoped routing.
     // The JWT may contain tenant memberships under `data.user.tenants`
@@ -78,7 +81,7 @@ export async function middleware(request: NextRequest) {
     loginUrl.searchParams.set('callbackUrl', pathname);
 
     const response = NextResponse.redirect(loginUrl);
-    response.cookies.delete(COOKIE_NAME);
+    response.cookies.delete(SESSION_COOKIE_NAME);
     return response;
   }
 }

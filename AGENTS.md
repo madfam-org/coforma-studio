@@ -133,9 +133,15 @@ together, with exact origins only (never a `**.r2.dev`-style wildcard).
 
 ### Backlog
 
-- **Janua verification.** `packages/web/src/lib/auth.ts` verifies the
-  `janua_session` cookie against a shared `JANUA_JWT_SECRET`, not Janua's
-  JWKS.
+- **Session token.** The `janua_session` cookie is Coforma's own HS256
+  session JWT, not a Janua token: the OIDC callback exchanges the code, reads
+  Janua's userinfo server-side, then mints the cookie with the Coforma-held
+  `JANUA_JWT_SECRET` (the name is historical). Janua tokens are never verified
+  locally, so Janua's JWKS/RS256 contract does not apply. Every mint and
+  verify goes through `packages/web/src/lib/session-token.ts`: HS256 only,
+  `exp` and `sub` required, and an unset or empty secret fails closed (jose 5
+  accepts a zero-length HMAC key). These routes live under `src/app`, which
+  is not in the shipped build today (see `docs/deploy-readiness.md`, F1).
 - **Billing.** Dhanam is the mandated platform and is not integrated. The
   Stripe references in the legacy section below are historical.
 
