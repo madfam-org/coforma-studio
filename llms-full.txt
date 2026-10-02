@@ -1,6 +1,6 @@
 # Coforma Studio Full LLM Context
 
-Generated: 2026-05-13
+Generated: 2026-05-13 (curated 2026-10-01; kept by sync-agent-docs.py)
 
 ## Purpose
 
@@ -41,8 +41,42 @@ gap or incident link.
 - `infra/`
 - `.github/workflows/`
 
+## Current state (verified 2026-10-01)
+
+- Stack: Next.js 15.5.27 (App Router) and tRPC 10.45.4 in `packages/web`;
+  NestJS + Prisma in `packages/api`; Postgres with row-level security per
+  tenant.
+- Dependencies: #144 brought `pnpm audit --prod` to 0 critical / 2 high
+  (`postcss` 8.4.31, pinned exactly by `next`).
+- Deploy: in-repo `build-deploy.yml` builds only the web image, pushes it to
+  `ghcr.io/madfam-org/coforma-studio/web`, signs it with cosign, commits
+  `deploy(web): pin digest ... [skip ci]` to
+  `infra/k8s/production/kustomization.yaml`, and Argo CD reconciles. It runs on
+  every push to `main` except `**.md`/`docs/**` changes; a manual dispatch
+  needs `deploy_ack=production`. The api and admin manifests are not in the
+  kustomization.
+- Runners: CI is pinned to `ubuntu-24.04` (#145); the deploy job uses ARC when
+  bootstrapped, else `ubuntu-24.04`.
+- CI gates: NetworkPolicy port lint, ESLint (web advisory, #113), Prettier
+  (advisory, #114), typecheck, build, vitest per package after test-database
+  migrations, and Trivy. The root `tests/api/*.test.ts` live-server tests and
+  the web Playwright suite do not run in CI.
+- Backlog: Next image optimizer still on (`images.domains` plus a
+  `**.r2.dev` wildcard; the fleet posture is `images.unoptimized: true` with an
+  exact allow-list). Janua session verification uses a shared secret, not
+  JWKS. Dhanam billing is not integrated.
+
+## Related repositories / contracts
+
+- Janua integration: https://github.com/madfam-org/janua/blob/main/docs/guides/ECOSYSTEM_INTEGRATION.md
+- PhyndCRM (receiver of `x-madfam-signature` events): https://github.com/madfam-org/phynd-crm/blob/main/README.md
+- PhyndCRM engagement events: https://github.com/madfam-org/phynd-crm/blob/main/docs/ENGAGEMENT_EVENT_TAXONOMY.md
+- Tulana PMF webhook `/v1/pmf/coforma-event` (the Tulana repository is not
+  public).
+
 ## Maintenance
 
-These files are maintained by `internal-devops/scripts/sync-agent-docs.py`.
+These files are maintained by `internal-devops/scripts/sync-agent-docs.py`,
+which keeps curated llms files untouched.
 If repo-specific long-form agent guidance is needed, put it in `AGENTS.md`,
 not `CLAUDE.md`.

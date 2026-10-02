@@ -1,5 +1,12 @@
 # Deploy Readiness Assessment — 2026-07-07
 
+> **Status as of 2026-10-01.** The api compile blocker (F2) is resolved: #112
+> took `@coforma/api` from 57 TypeScript errors to 0, and `pnpm typecheck` gates
+> CI. The rest still holds. `build-deploy.yml` builds only the web image, and
+> only `web-deployment.yaml` is in the kustomization `resources:`. The api still
+> has no image job and no kustomization entry. Current pipeline facts are in
+> `AGENTS.md` ("Current state") and [deployment.md](./deployment.md).
+
 **Branch:** `claude/deploy-readiness` · **Base:** `main` @ `7da3b4a`
 **Verdict:** `web` shell is deployable today (pipeline exists and the image builds);
 the **product is not** — the built web artifact serves only a landing page +

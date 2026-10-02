@@ -9,8 +9,8 @@ Technical documentation for developers, operators, and stakeholders.
 ## 📊 Project Status
 
 - **[Project Status](../PROJECT_STATUS.md)** - Current implementation status
-- **[Latest Audit](../COMPREHENSIVE_AUDIT_2025-11-19.md)** - Comprehensive audit (2025-11-19)
-- **[RLS Implementation](../RLS_IMPLEMENTATION_SUMMARY.md)** - Multi-tenant security details
+- **[Latest Audit](./reports/COMPREHENSIVE_AUDIT_2025-11-19.md)** - Comprehensive audit (2025-11-19)
+- **[RLS Implementation](./architecture/RLS_IMPLEMENTATION_SUMMARY.md)** - Multi-tenant security details
 
 ## Contents
 
@@ -19,11 +19,12 @@ Technical documentation for developers, operators, and stakeholders.
 - **[API Specification](./api-specification.md)** - REST and tRPC endpoint documentation
 
 ### Operations ✅ Available
-- **[Deployment Guide](./deployment.md)** - How to deploy to production
+- **[Deployment Guide](./deployment.md)** - Current path: `build-deploy.yml` → GHCR → cosign → digest pin → Argo CD (web only). The Vercel/Railway runbooks below its first section are historical.
+- **[Deploy Readiness (2026-07-07)](./deploy-readiness.md)** - Why only the web shell ships today
 
 ### Security ✅ Available
 - **[Security Policy](../SECURITY.md)** - Security practices and vulnerability reporting
-- **[RLS Implementation](../RLS_IMPLEMENTATION_SUMMARY.md)** - Multi-tenant isolation details
+- **[RLS Implementation](./architecture/RLS_IMPLEMENTATION_SUMMARY.md)** - Multi-tenant isolation details
 - **[Testing Guide](../packages/api/test/README.md)** - How to test RLS and security
 
 ### Development ✅ Available
@@ -32,11 +33,11 @@ Technical documentation for developers, operators, and stakeholders.
 - **[README](../README.md)** - Quick start and setup
 
 ### Business ✅ Available
-- **[Product Vision](../PRODUCT_VISION.md)** - Mission and vision
-- **[Software Specification](../SOFTWARE_SPEC.md)** - Functional requirements
-- **[Operating Model](../OPERATING_MODEL.md)** - Team structure and processes
-- **[Business Development](../BIZ_DEV.md)** - Go-to-market strategy
-- **[Technology Stack](../TECH_STACK.md)** - Technology decisions and rationale
+- **[Product Vision](./business/PRODUCT_VISION.md)** - Mission and vision
+- **[Software Specification](./architecture/SOFTWARE_SPEC.md)** - Functional requirements
+- **[Operating Model](./business/OPERATING_MODEL.md)** - Team structure and processes
+- **[Business Development](./business/BIZ_DEV.md)** - Go-to-market strategy
+- **[Technology Stack](./architecture/TECH_STACK.md)** - Technology decisions and rationale
 
 ### 🚧 Coming Soon
 

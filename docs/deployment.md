@@ -2,6 +2,33 @@
 
 **Coforma Studio Deployment Runbooks**
 
+> **Current deploy path (verified 2026-10-01).** Vercel and Railway are not
+> used. Everything below "Overview" is a historical runbook, kept only for
+> reference.
+>
+> - **Pipeline:** `.github/workflows/build-deploy.yml` builds the **web** image
+>   from the root `Dockerfile` and pushes
+>   `ghcr.io/madfam-org/coforma-studio/web:<sha>`. It signs the image with
+>   cosign (three attempts), resolves the digest from the registry, and commits
+>   `deploy(web): pin digest <short> [skip ci]` to
+>   `infra/k8s/production/kustomization.yaml`. Argo CD then reconciles the
+>   `coforma-studio` namespace.
+> - **Triggers:** every push to `main` except changes limited to `**.md` and
+>   `docs/**`. `llms.txt` and `llms-full.txt` are not `**.md`, so changing them
+>   rebuilds web. A manual `workflow_dispatch` requires `deploy_ack=production`
+>   and a reason of at least 12 characters. The concurrency group
+>   `coforma-production-kustomization` does not cancel in-progress runs.
+> - **Runners:** ARC (`madfam-runners-blue`) when the repo variable
+>   `ARC_BOOTSTRAP_COMPLETE` is `true`, otherwise `ubuntu-24.04`. All CI jobs
+>   are pinned to `ubuntu-24.04` (#145), ahead of GitHub moving `ubuntu-latest`
+>   to Ubuntu 26 on 2026-10-19.
+> - **Not deployed:** the API and the admin app. Their manifests exist but are
+>   not in the kustomization `resources:` (see
+>   [deploy-readiness.md](./deploy-readiness.md)).
+> - **Migrations** are never run by the pipeline.
+> - **Verify:** the `deploy(web): pin digest` commit lands on `main`, and the
+>   digest in `kustomization.yaml` matches the signed image.
+
 ## Overview
 
 Coforma Studio uses a multi-provider deployment strategy:

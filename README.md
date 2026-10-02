@@ -35,14 +35,14 @@ Built with a **LATAM-first ethos** and designed for **global scalability**, Cofo
 > Updated 2026-07-04 to match what this repository actually contains (its manifests and code) and MADFAM platform mandates. An earlier version of this section described a NextAuth/Stripe/Vercel/Railway stack that does not match the repo's own deploy manifests; that material is preserved in the historical planning docs (see [docs/archive/](./docs/archive/) and [docs/deployment.md](./docs/deployment.md), which still documents the old Vercel/Railway runbooks).
 
 * **Monorepo:** Turborepo + pnpm workspaces (`packages/web`, `packages/api`, `packages/types`, `packages/ui`).
-* **Frontend:** Next.js 15 (App Router, React, Tailwind CSS).
+* **Frontend:** Next.js 15.5 (App Router, React, Tailwind CSS), tRPC 10.45.
 * **Backend/API:** NestJS (Node.js) with Prisma ORM.
 * **Database:** PostgreSQL with Row-Level Security (RLS) enforced multi-tenancy.
 * **Cache/Queue:** Redis with BullMQ for background jobs (local dev via `docker-compose.yml`).
 * **Search:** Meilisearch (local dev via `docker-compose.yml`).
 * **Authentication:** **Janua** (MADFAM's identity platform, `auth.madfam.io`) via OIDC — implemented in `packages/web/src/lib/auth.ts`. The former NextAuth.js route survives only as a deprecated redirect stub.
 * **Billing:** `@madfam/billing` NestJS module backed by the Janua client (subscription/tier/feature/usage guards). **Dhanam** is MADFAM's mandated billing platform; no payment-processor integration is implemented yet — the Prisma schema retains unused `stripe*` placeholder columns only.
-* **Deployment:** Container images built by GitHub Actions, pushed to GHCR and cosign-signed; Kubernetes manifests in `infra/k8s/production/` (web, api, admin) reconciled via Argo CD. Onboarding onto **Enclii**, MADFAM's deployment platform, is in progress — `enclii.yaml` is currently a status-only declaration for status.madfam.io. **Not** deployed on Vercel or Railway.
+* **Deployment:** Container images built by GitHub Actions (`.github/workflows/build-deploy.yml`), pushed to GHCR and cosign-signed, digest-pinned in `infra/k8s/production/kustomization.yaml`, and reconciled via Argo CD. Only the **web** image is built and only `web-deployment.yaml` is in the kustomization; `api-deployment.yaml` and `admin-deployment.yaml` exist but are not deployed (see [docs/deploy-readiness.md](./docs/deploy-readiness.md)). Details in [docs/deployment.md](./docs/deployment.md). Onboarding onto **Enclii**, MADFAM's deployment platform, is in progress — `enclii.yaml` is currently a status-only declaration for status.madfam.io. **Not** deployed on Vercel or Railway.
 * **Integrations (roadmap):** Zoom, Slack, Jira, Asana, ClickUp, HubSpot.
 
 ---
@@ -200,6 +200,12 @@ pnpm db:reset             # Reset database (WARNING: deletes all data)
 - **[Deployment Guide](./docs/deployment.md)** - Deployment procedures
 - **[Testing Guide](./packages/api/test/README.md)** - How to run and write tests
 
+### Related repositories / contracts
+- **Janua (identity, OIDC):** `packages/web/src/lib/auth.ts`. Contract: [janua `docs/guides/ECOSYSTEM_INTEGRATION.md`](https://github.com/madfam-org/janua/blob/main/docs/guides/ECOSYSTEM_INTEGRATION.md), which describes RS256 verification against Janua's JWKS by `kid`. Coforma currently verifies its `janua_session` cookie with `jose.jwtVerify` against a shared symmetric `JANUA_JWT_SECRET` instead; moving to JWKS is open follow-up work.
+- **PhyndCRM (CAB lifecycle events and inbound webhooks):** `packages/web/src/lib/phyndcrm-relay.ts` and `packages/api/src/integrations/phyndcrm/`. Events are signed with `x-madfam-signature: t=<unix>,v1=<hex>`; the receiver's verification is described in [phynd-crm `README.md`](https://github.com/madfam-org/phynd-crm/blob/main/README.md). Other MADFAM emitters reuse this byte-identical wire format.
+- **Tulana (PMF events):** `packages/api/src/integrations/tulana/cab-event-webhook.service.ts` posts HMAC-signed CAB-completion events to Tulana's `/v1/pmf/coforma-event` (the Tulana repository is not public).
+- **Dhanam (billing):** mandated billing platform; not integrated yet (see Architecture above).
+
 ### Archive
 - **[Historical Docs](./docs/archive/)** - Outdated documentation (preserved for reference)
 
@@ -232,6 +238,6 @@ Copyright © 2025 Innovaciones MADFAM S.A.S. de C.V.
 ## Support
 
 - **Documentation**: See [docs/](./docs/) directory
-- **Issues**: [GitHub Issues](https://github.com/madfam-io/coforma-studio/issues)
+- **Issues**: [GitHub Issues](https://github.com/madfam-org/coforma-studio/issues)
 - **Email**: hello@innovacionesmadfam.dev
 - **Website**: [innovacionesmadfam.dev](https://innovacionesmadfam.dev)
