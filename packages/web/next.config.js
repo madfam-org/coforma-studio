@@ -24,16 +24,17 @@ const nextConfig = {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   },
 
-  // Image optimization
+  // Images: GHSA-2xp9-vwfh-vxw4 defence in depth. Nothing in this app imports
+  // next/image (avatars are plain <img> tags), so Next's built-in optimizer is
+  // off and /_next/image answers 404. The middleware matcher skips
+  // /_next/image, so an enabled optimizer would be reachable without a
+  // session. The allow-list is exact and empty (it replaces `domains` and a
+  // `**.r2.dev` wildcard that matched every public R2 bucket), so re-enabling
+  // optimization later cannot turn the app into an open image proxy.
+  // Guarded by src/__tests__/next-config-images.test.ts.
   images: {
-    domains: ['cdn.coforma.studio'],
-    formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.r2.dev',
-      },
-    ],
+    unoptimized: true,
+    remotePatterns: [],
   },
 
   // Security headers

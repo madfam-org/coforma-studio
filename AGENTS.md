@@ -118,14 +118,21 @@ Known gaps:
 - No skipped (`.skip`/`.only`) tests, and no known flaky tests. CI on `main`
   has been green since 2026-08-14.
 
+### Security invariant: Next image optimizer off
+
+`packages/web/next.config.js` sets `images.unoptimized: true` with
+`remotePatterns: []`, so `/_next/image` answers 404 (GHSA-2xp9-vwfh-vxw4
+defence in depth; `next` 15.5.27 already carries the fix). Nothing imports
+`next/image`; avatars are plain `<img>` tags. The middleware matcher skips
+`/_next/image`, so an enabled optimizer would be reachable without a session.
+`packages/web/src/__tests__/next-config-images.test.ts` (vitest, blocking
+`pnpm test`) checks the flag, the exact empty allow-list with no `domains`,
+and that no `src/` file imports `next/image`. Re-enabling the optimizer or
+adding a remote origin means changing the config, the test and this section
+together, with exact origins only (never a `**.r2.dev`-style wildcard).
+
 ### Backlog
 
-- **Next image optimizer posture.** `packages/web/next.config.*` keeps the
-  optimizer on, with `images.domains: ['cdn.coforma.studio']` and a
-  `remotePatterns` wildcard `**.r2.dev`. The fleet posture after
-  GHSA-2xp9-vwfh-vxw4 is `images.unoptimized: true` plus an exact
-  `remotePatterns` allow-list, with `/_next/image` returning 404. `next`
-  15.5.27 includes the advisory fix, so this is defence in depth.
 - **Janua verification.** `packages/web/src/lib/auth.ts` verifies the
   `janua_session` cookie against a shared `JANUA_JWT_SECRET`, not Janua's
   JWKS.
