@@ -55,7 +55,7 @@ redirect and should not become the source of truth again.
 Regenerate or repair these files with
 `internal-devops/scripts/sync-agent-docs.py` from the labspace ecosystem.
 
-## Current state (verified 2026-10-01)
+## Current state (verified 2026-10-02)
 
 This section is current. The imported legacy guidance below is kept for
 context; where they disagree, this section, `README.md` and `PROJECT_STATUS.md`
@@ -131,19 +131,36 @@ and that no `src/` file imports `next/image`. Re-enabling the optimizer or
 adding a remote origin means changing the config, the test and this section
 together, with exact origins only (never a `**.r2.dev`-style wildcard).
 
-### Backlog
+### Session token
 
-- **Session token.** The `janua_session` cookie is Coforma's own HS256
-  session JWT, not a Janua token: the OIDC callback exchanges the code, reads
-  Janua's userinfo server-side, then mints the cookie with the Coforma-held
-  `JANUA_JWT_SECRET` (the name is historical). Janua tokens are never verified
-  locally, so Janua's JWKS/RS256 contract does not apply. Every mint and
-  verify goes through `packages/web/src/lib/session-token.ts`: HS256 only,
-  `exp` and `sub` required, and an unset or empty secret fails closed (jose 5
-  accepts a zero-length HMAC key). These routes live under `src/app`, which
-  is not in the shipped build today (see `docs/deploy-readiness.md`, F1).
-- **Billing.** Dhanam is the mandated platform and is not integrated. The
-  Stripe references in the legacy section below are historical.
+The `janua_session` cookie is Coforma's own HS256 session JWT, not a Janua
+token: the OIDC callback exchanges the code, reads Janua's userinfo
+server-side, then mints the cookie with the Coforma-held `JANUA_JWT_SECRET`
+(the name is historical). Janua tokens are never verified locally, so Janua's
+JWKS/RS256 contract does not apply. Every mint and verify goes through
+`packages/web/src/lib/session-token.ts` (#148): HS256 only, `exp` and `sub`
+required, an unset or empty secret fails closed, and a secret shorter than 32
+bytes logs a warning. `packages/web/src/lib/__tests__/session-token.test.ts`
+covers it. These routes live under `src/app`, which is not in the shipped
+build today (see `docs/deploy-readiness.md`, F1).
+
+### Pending work (as of 2026-10-02)
+
+This is the single pending-work list for the repository. `PROJECT_STATUS.md`,
+`README.md`, `llms.txt` and `llms-full.txt` point here. Priorities: **P0**
+blocks production use, **P1** next, **P2** planned, **P3** cleanup.
+
+| Item | Why it matters | Priority | Kind | Tracking |
+| ---- | -------------- | -------- | ---- | -------- |
+| **Ship the product `src/app` or bless the web shell.** Next.js builds root `app/` (`/`, `/_not-found`, `/api/health`) and silently excludes `packages/web/src/app` (auth pages, `[tenant]` pages, `/api/v1/*` handlers). Before `src/app` ships: complete the auth hardening checklist (tracked privately) and set `JANUA_JWT_SECRET` to at least 32 bytes (`openssl rand -hex 32`). | Today production serves only a shell; none of the product, including Janua sign-in, is live. | P1 | Owner decision, then engineering work | `docs/deploy-readiness.md`, F1 |
+| **Deploy the API.** `@coforma/api` now typechecks and builds in CI, but there is no api image job, and `api-deployment.yaml` is not in the kustomization `resources:`. The billing-dependency question (F2 cluster 1: provide `@madfam/billing`/`@janua/client` or remove the module) comes first. | Without it the PhyndCRM and Tulana webhook paths have no running receiver. | P2 | Owner decision (billing deps), then engineering work | `docs/deploy-readiness.md`, F2 and "Recommended order of work" |
+| **Integrate Dhanam billing** and drop the unused `stripe*` Prisma columns. | Dhanam is the mandated billing platform; no payment processor is integrated. | P2 | Engineering work | — |
+| **Enclii runtime/network onboarding.** `enclii.yaml` is status-only. | Deploys use the in-repo pipeline instead of the shared Enclii path. | P2 | Engineering work | — |
+| **ESLint and Prettier are red.** `@coforma/web` ESLint (579 typed-lint errors) and `pnpm format:check` (116 files) run as `continue-on-error`. | Lint and format regressions in those areas do not fail CI. | P2 | Engineering work | #113, #114 |
+| **Tests that never run in CI.** The root `tests/api/*.test.ts` live-server tests (health, boards, feedback) and the `packages/web` Playwright suite (`test:e2e`). | They can rot unnoticed; the shipped web shell has no end-to-end check. | P2 | Engineering work | "Tests and CI gates" above |
+| **Seed-data hygiene.** `packages/api/prisma/seeds/madfam-internal-tenant.ts` hardcodes a named person as the owner user. | A public repo should seed placeholders or read the owner identity from the environment. | P2 | Owner decision (which identity to seed), then engineering work | — |
+| **Retire the Vercel/Railway runbooks** in `docs/deployment.md`. | They describe a deploy path the repo does not use. | P3 | Engineering work | — |
+| **CAB product features** (recruitment CRM, engagement hub, roadmap linkage, incentives, analytics). | Most product features are not built; see the phases in `README.md`, "Roadmap". | P3 | Owner decision (sequencing) | `README.md`, "Roadmap" |
 
 ### Related repositories / contracts
 

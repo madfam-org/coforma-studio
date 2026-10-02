@@ -41,7 +41,7 @@ gap or incident link.
 - `infra/`
 - `.github/workflows/`
 
-## Current state (verified 2026-10-01)
+## Current state (verified 2026-10-02)
 
 - Stack: Next.js 15.5.27 (App Router) and tRPC 10.45.4 in `packages/web`;
   NestJS + Prisma in `packages/api`; Postgres with row-level security per
@@ -64,9 +64,16 @@ gap or incident link.
 - Invariant: the web app's Next image optimizer is off
   (`images.unoptimized: true`, `remotePatterns: []`, `/_next/image` → 404),
   guarded by `packages/web/src/__tests__/next-config-images.test.ts`.
-- Backlog: Dhanam billing is not integrated. (The `janua_session` cookie is
-  Coforma's own HS256 session token, `packages/web/src/lib/session-token.ts`,
-  not a Janua token, so no JWKS port is needed.)
+- Session token: the `janua_session` cookie is Coforma's own HS256 session
+  token (`packages/web/src/lib/session-token.ts`, #148: HS256 only, `exp` and
+  `sub` required, fails closed without a secret), not a Janua token, so no
+  JWKS port is needed.
+- Pending work: the single list, with priorities (P0-P3) and owner-decision
+  vs engineering labels, is `AGENTS.md`, "Pending work". Top item: the owner
+  decision on shipping the product `src/app` (`docs/deploy-readiness.md`, F1),
+  which needs the auth hardening checklist (tracked privately) and a
+  `JANUA_JWT_SECRET` of at least 32 bytes first. Do not keep a separate list
+  here.
 
 ## Related repositories / contracts
 

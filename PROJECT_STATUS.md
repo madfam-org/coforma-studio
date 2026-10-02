@@ -62,8 +62,7 @@ status report (2025-11-19) is preserved at
 
 ## Next Steps
 
-1. Complete Enclii runtime/network onboarding (replace status-only
-   `enclii.yaml`).
-2. Integrate Dhanam for billing; remove Stripe placeholder columns.
-3. Build out core CAB product features and expand the test suite.
-4. Retire or archive `docs/deployment.md` Vercel/Railway content.
+The single pending-work list, with priorities and owner-decision vs
+engineering labels, is in [`AGENTS.md`, "Pending work"](./AGENTS.md#pending-work-as-of-2026-10-02).
+The first item is the owner decision on shipping the product `src/app`
+(`docs/deploy-readiness.md`, F1).

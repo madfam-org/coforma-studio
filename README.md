@@ -64,6 +64,8 @@ Built with a **LATAM-first ethos** and designed for **global scalability**, Cofo
 * **Phase 3 (12–24 months):** Productization with white-labeling, integrations, and advanced analytics.
 * **Phase 4 (24+ months):** AI-assisted facilitation, facilitator marketplace, enterprise/gov adoption.
 
+These are product phases. The current engineering and owner-decision backlog, with priorities, is in [`AGENTS.md`, "Pending work"](AGENTS.md#pending-work-as-of-2026-10-02).
+
 ---
 
 ## Success Metrics
