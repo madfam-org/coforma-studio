@@ -512,7 +512,7 @@ When adding features, update:
 
 - **Technical**: Ask in #engineering Slack channel
 - **Product**: Ask in #product Slack channel
-- **General**: hello@innovacionesmadfam.dev
+- **General**: hola@madfam.io
 
 ## License
 

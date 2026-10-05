@@ -5,7 +5,7 @@
 > DB mutations, RLS fixtures, exports/imports, webhooks, integration sync, billing flows, package publishing, and deploy workflows are side-effectful. Keep examples placeholder-only and set the matching local guard env var only for an explicit operation.
 
 **Domain:** [coforma.studio](https://coforma.studio)
-**Developer:** Innovaciones MADFAM ([innovacionesmadfam.dev](https://innovacionesmadfam.dev))
+**Developer:** Innovaciones MADFAM ([madfam.io](https://madfam.io))
 **Parent Company:** Innovaciones MADFAM S.A.S. de C.V. ([madfam.io](https://madfam.io))
 
 ---
@@ -241,5 +241,5 @@ Copyright © 2025 Innovaciones MADFAM S.A.S. de C.V.
 
 - **Documentation**: See [docs/](./docs/) directory
 - **Issues**: [GitHub Issues](https://github.com/madfam-org/coforma-studio/issues)
-- **Email**: hello@innovacionesmadfam.dev
-- **Website**: [innovacionesmadfam.dev](https://innovacionesmadfam.dev)
+- **Email**: hola@madfam.io
+- **Website**: [madfam.io](https://madfam.io)

@@ -2,7 +2,7 @@
 
 **Product:** Coforma Studio
 **Domain:** [coforma.studio](https://coforma.studio)
-**Developer:** Innovaciones MADFAM ([innovacionesmadfam.dev](https://innovacionesmadfam.dev))
+**Developer:** Innovaciones MADFAM ([madfam.io](https://madfam.io))
 **Parent Company:** Innovaciones MADFAM S.A.S. de C.V. ([madfam.io](https://madfam.io))
 
 ---

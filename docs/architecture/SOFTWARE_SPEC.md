@@ -2,7 +2,7 @@
 
 **Product:** Coforma Studio
 **Primary Domain:** coforma.studio
-**Builder:** Innovaciones MADFAM — innovacionesmadfam.dev / madfam.io
+**Builder:** Innovaciones MADFAM — madfam.io
 **Version:** v1.1 (Updated with Vercel + Railway + Cloudflare infra)
 **Owner:** Aldo Ruiz Luna
 

@@ -16,7 +16,7 @@ If you discover a security vulnerability in Coforma Studio, please report it to 
 
 ### Contact
 
-- **Email**: security@innovacionesmadfam.dev
+- **Email**: security@madfam.io
 - **Response Time**: We aim to acknowledge reports within 48 hours
 - **Resolution Time**: Critical vulnerabilities will be addressed within 7 days
 
@@ -265,7 +265,7 @@ logger.info('OAuth token', { token: oauthToken });
 - **Data Subject Rights**: Right to access, rectify, delete, portability
 - **Consent Management**: Clear opt-in for data processing
 - **Data Breach Notification**: Within 72 hours of discovery
-- **Data Protection Officer**: security@innovacionesmadfam.dev
+- **Data Protection Officer**: privacy@madfam.io
 
 ### LGPD (Brazil)
 
@@ -290,7 +290,7 @@ Users can request:
 - **Data correction** (via UI: Settings → Edit Profile)
 
 **Admin DSR Handling:**
-- Manual requests: security@innovacionesmadfam.dev
+- Manual requests: privacy@madfam.io
 - Response time: 30 days (per GDPR)
 
 ## Security Tools
@@ -351,8 +351,8 @@ Users can request:
 
 ## Contact
 
-- **Security Team**: security@innovacionesmadfam.dev
-- **General Inquiries**: hello@innovacionesmadfam.dev
+- **Security Team**: security@madfam.io
+- **General Inquiries**: hola@madfam.io
 - **Bug Bounty**: Not yet available (planned for Phase 2)
 
 ---
